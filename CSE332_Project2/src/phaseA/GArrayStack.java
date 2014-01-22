@@ -7,7 +7,8 @@ import java.util.EmptyStackException;
 public class GArrayStack<E> implements GStack {
 	private E[] stackArray;
 	//index of the top of the stack
-	private int top;
+	// looks good!
+  private int top;
 	private final int INITIAL_SIZE = 10;
 	private final int RESIZE_FACTOR = 2;
 	
