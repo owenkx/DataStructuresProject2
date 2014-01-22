@@ -2,37 +2,62 @@ package phaseA;
 import providedCode.*;
 
 
-public class GArrayStack<T> implements GStack<T> {
-	
-	public GArrayStack() {
-		/**
-		 * You can replace the contents of this class with your GArrayStack 
-		 * implementation from project 1 if you want.		  
-		 */
-	}
+import java.util.EmptyStackException;
 
+public class GArrayStack<E> implements GStack {
+	private E[] stackArray;
+	//index of the top of the stack
+	private int top;
+	private final int INITIAL_SIZE = 10;
+	private final int RESIZE_FACTOR = 2;
+	
+	public GArrayStack(){
+		stackArray = (E[]) new Object[INITIAL_SIZE];
+		top = 0;
+	}
+	
+	//returns whether or not the stack is empty
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return top == 0;
+	}
+	
+	//takes in a value and pushes it to the top of the stack.
+	//if no room, doubles the capacity of the stack.
+	@Override
+	public void push(Object o) {
+		if (top == stackArray.length)
+			resize(stackArray.length * RESIZE_FACTOR);
+		stackArray[top] = (E) o;
+		top++;
 	}
 
+	//decrements the stack index and returns the popped value
 	@Override
-	public void push(T d) {
-		// TODO Auto-generated method stub
-		
+	public E pop() {
+		if (isEmpty()) {
+			throw new EmptyStackException();
+		}
+		top--;
+		return stackArray[top];
 	}
 
+	//if nonempty, returns the value at the top of the stack
 	@Override
-	public T pop() {
-		// TODO Auto-generated method stub
-		return null;
+	public E peek() {
+		if (isEmpty())
+			throw new EmptyStackException();
+		return stackArray[top - 1];
 	}
-
-	@Override
-	public T peek() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	//takes in a size and copies the current stack elements to
+	//a stack of that size
+	private void resize(int newSize) {
+		E[] newArray = (E[]) new Object[newSize];
+		for (int i = 0; i < stackArray.length; i++) {
+			newArray[i] = stackArray[i];
+		}
+		stackArray = newArray;
 	}
+	
 }
-
