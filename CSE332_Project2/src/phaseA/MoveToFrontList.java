@@ -1,6 +1,8 @@
 package phaseA;
-import providedCode.*;
-
+import providedCode.Comparator;
+import providedCode.DataCount;
+import providedCode.DataCounter;
+import providedCode.SimpleIterator;
 
 /**
  * TODO: Replace this comment with your own as appropriate.
@@ -17,32 +19,139 @@ import providedCode.*;
  */
 public class MoveToFrontList<E> extends DataCounter<E> {
 
-	
+	private MTFNode overallRoot; 
+	private int size;
+	private Comparator<? super E> comparator;
+
 	public MoveToFrontList(Comparator<? super E> c) {
-		// TODO: To-be implemented
+		this.comparator = c;
+		this.size = 0;
+		this.overallRoot = null;
 	}
-	
-	@Override
+
+	/** {@inheritDoc} */
 	public void incCount(E data) {
-		// TODO Auto-generated method stub
+		if (this.overallRoot == null) {
+			// first thing
+			this.overallRoot = new MTFNode(data);
+			if (this.overallRoot.next != null) {
+				System.out.println(">>>>>>>>>>>>>");
+			}
+			this.size++;
+			return;
+		}
+		// we have to linear search along
+		MTFNode current = overallRoot;
+
+		while (current != null) {
+			//System.out.println(current + "size : " + size);
+			if (comparator.compare(current.data, data) == 0) {
+				// Found it!
+				current.count++;
+
+				// if we aren't on the end, update the next node's prev
+				if (current.next != null) { current.next.prev = current.prev; }
+				// if we aren't at the beginning, update the previous node's next
+				if (current.prev != null) { current.prev.next = current.next; }
+				// and finally update the overall root to the current node
+				if (current != this.overallRoot) {
+					current.next = this.overallRoot;
+					this.overallRoot = current;
+				}
+				return;
+			} else {
+				current = current.next;
+			}
+		}
+
+		System.out.println("got here");
+		// didn't find it; add to front
+		this.size++;
+		this.overallRoot = new MTFNode(data, this.overallRoot);
+		this.overallRoot.next.prev = this.overallRoot;
+
 	}
 
-	@Override
+	/** {@inheritDoc} */
 	public int getSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
-	@Override
+	/** {@inheritDoc} */
 	public int getCount(E data) {
-		// TODO Auto-generated method stub
+		// we have to linear search along
+		MTFNode current = overallRoot;
+
+		while (current != null) {
+			if (comparator.compare(current.data, data) == 0) {
+				System.out.println("found");
+				// Found it!
+				// if we aren't on the end, update the next node's prev
+				if (current.next != null) { current.next.prev = current.prev; }
+				// if we aren't at the beginning, update the previous node's next
+				if (current.prev != null) { current.prev.next = current.next; }
+				// and finally update the overall root to the current node
+				current.next = this.overallRoot;
+				this.overallRoot = current;
+				return current.count;
+			}
+			current = current.next;
+		}
+		System.out.println("Not found: " + data);
 		return 0;
 	}
 
-	@Override
+	/** {@inheritDoc} */
 	public SimpleIterator<DataCount<E>> getIterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		
+		return new SimpleIterator<DataCount<E>>() {  
+    		MTFNode current = overallRoot;
+    		
+    		public boolean hasNext() {
+        		return (current != null);
+        	}
+        	public DataCount<E> next() {
+        		if(!hasNext()) {
+        			throw new java.util.NoSuchElementException();
+        		}
+        		MTFNode old = current;
+        		current = current.next;
+        		return new DataCount<E>(old.data, old.count);
+        	}
+    	};
+    }
+		
 
+	/** PRIVATE INNER CLASS ============= **/
+
+	/** Inner class to represent a node in the move-to-front list. Each node has a 
+	 * to the next reference
+	 */
+	private class MTFNode {
+		public MTFNode next;
+		public MTFNode prev;
+		public E data;
+		public int count;
+
+		public MTFNode(E data, MTFNode next) {
+			if (((Integer) data).equals(7)) {
+				System.out.println("7 found!");
+			}
+			this.next = next;
+			this.prev = null;
+			this.data = data;
+			this.count = 1;
+		}
+
+		public MTFNode(E data) {
+			this(data, null);
+		}
+		
+		public String toString() {
+			String result = "";
+			if (next == null) { result += "Next: null "; } else { result += "Next: nonnull " + next.data; }
+			if (prev == null) { result += "prev: null "; } else { result += "prev: nonnull "; }
+			return result + " data: " + data;
+		}
+	}
 }
