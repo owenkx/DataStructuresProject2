@@ -1,3 +1,3 @@
-Owen and Brian's badass Project 2 repo.
+Owen and Brian's super badass Project 2 repo.
 
 Go dawgs.

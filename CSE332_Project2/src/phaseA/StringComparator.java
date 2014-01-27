@@ -14,11 +14,14 @@ public class StringComparator implements Comparator<String>{
 	
 	@Override
 	public int compare(String s1, String s2) {
-		int length = s1.length();
-		if (s1.length() > s2.length())
-			length = s2.length();
+		int length1 = s1.length();
+		int length2 = s2.length();
 		
-		for (int i = 0; i < length; i++) {
+		int minLength = s1.length();
+		if (length1 > length2)
+			minLength = length2;
+		
+		for (int i = 0; i < minLength; i++) {
 			char char1 = s1.charAt(i);
 			char char2 = s2.charAt(i); 
 			if (char1 < char2)
@@ -27,6 +30,6 @@ public class StringComparator implements Comparator<String>{
 				return 1;
 		}
 		
-		return s1.length() - s2.length();
+		return length1 - length2;
 	}
 }
