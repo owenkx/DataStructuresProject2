@@ -28,13 +28,13 @@ public class FourHeap<E> extends Heap<E> {
 	}
 	
 	public FourHeap(int n, Comparator<? super E> c) {
-		this((E[]) new Object[n], c);
+		this((E[]) new Object[n], c, -1);
 	}
 	
-	public FourHeap(E[] insertArray, Comparator<?super E> c) {
-		currentIndex = -1;
+	public FourHeap(E[] insertArray, Comparator<?super E> c, int lastIndex) {
+		currentIndex = lastIndex;
 		comparator = c;
-		this.heapArray = (E []) new Object[insertArray.length];
+		heapArray = (E []) new Object[insertArray.length];
 		for (int i = 0; i < insertArray.length; i++) {
 			heapArray[i] = insertArray[i];
 		}
@@ -44,7 +44,7 @@ public class FourHeap<E> extends Heap<E> {
 	@Override
 	//inserts an item, and keeps the tree complete
 	public void insert(E item) {
-		if (currentIndex == heapArray.length - 1)
+		if (currentIndex == heapArray.length)
 			resize(heapArray.length * RESIZE_FACTOR);
 		int hole = percolateUp(++currentIndex, item);
 		heapArray[hole] = item;

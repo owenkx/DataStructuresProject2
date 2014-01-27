@@ -30,7 +30,7 @@ public class Sorter {
     }
     
     public static <E> void heapSort(E[] array, Comparator<E> comparator) {
-    	FourHeap<E> heap = new FourHeap<E>(array, comparator);
+    	FourHeap<E> heap = new FourHeap<E>(array, comparator, array.length);
     	for (int i = 0; i < array.length; i++) {
     		array[i] = heap.deleteMin();
     	}
