@@ -1,6 +1,6 @@
 package main;
 import providedCode.Comparator;
-
+import phaseA.FourHeap;
 
 /** 
  *  TODO: Replace this comment with your own as appropriate.
@@ -30,7 +30,10 @@ public class Sorter {
     }
     
     public static <E> void heapSort(E[] array, Comparator<E> comparator) {
-    	// TODO: To-be implemented
+    	FourHeap<E> heap = new FourHeap<E>(array, comparator);
+    	for (int i = 0; i < array.length; i++) {
+    		array[i] = heap.deleteMin();
+    	}
     }
     
     public static <E> void topKSort(E[] array, Comparator<E> comparator, int k) {
