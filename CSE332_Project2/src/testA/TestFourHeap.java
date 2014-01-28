@@ -1,9 +1,7 @@
 package testA;
 import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import phaseA.FourHeap;
 import providedCode.Comparator;
 
@@ -97,6 +95,7 @@ public class TestFourHeap {
 	
 	private boolean deleteMinTest(Integer[] testArray) {
 		for (int index = 0; !heap.isEmpty(); index++) {
+			System.out.println(heap.findMin());
 			if (heap.deleteMin() != testArray[index])
 				return false;
 		}

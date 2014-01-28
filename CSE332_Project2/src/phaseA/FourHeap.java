@@ -46,10 +46,9 @@ public class FourHeap<E> extends Heap<E> {
 	@Override
 	//inserts an item, and keeps the tree complete
 	public void insert(E item) {
-		if (currentIndex == heapArray.length - 1)
+		if (isFull())
 			resize(heapArray.length * RESIZE_FACTOR);
-		int hole = percolateUp(++currentIndex, item);
-		heapArray[hole] = item;
+		heapArray[percolateUp(++currentIndex, item)] = item;
 	}
 
 	@Override
@@ -67,8 +66,8 @@ public class FourHeap<E> extends Heap<E> {
 		if (isEmpty())
 			throw new NoSuchElementException();
 		E min = findMin();
-		heapArray[0] = heapArray[currentIndex--];
-		percolateDown(0);
+		int hole = percolateDown(0, heapArray[currentIndex]);
+		heapArray[hole] = heapArray[currentIndex--];
 		return min;
 	}
 
@@ -96,11 +95,10 @@ public class FourHeap<E> extends Heap<E> {
 	//Takes in an index to percolate down from, finds the 
 	//smallest of the four children and swaps the values
 	//until the heap is in order.
-	private void percolateDown(int hole) {
-		E reference = heapArray[hole];
+	private int percolateDown(int hole, E reference) {
 		while (hole * 4 + 1 <= currentIndex) {
-			int targetChild = hole * 4 + 1;
-			int firstChild = targetChild; 
+			int firstChild = hole * 4 + 1;
+			int targetChild = firstChild; 
 			
 			for (int i = 1; i <= 3; i++) {
 				if (firstChild + i <= currentIndex && 
@@ -108,14 +106,14 @@ public class FourHeap<E> extends Heap<E> {
 					targetChild = firstChild + i;
 			}
 			if (comparator.compare(heapArray[targetChild], reference) < 0) {
-				E temp = heapArray[hole];
 				heapArray[hole] = heapArray[targetChild];
-				heapArray[targetChild] = temp;
+				//heapArray[targetChild] = reference;
 				hole = targetChild;
 			} else {
 				break;
 			}
 		}
+		return hole;
 	}
 
 	//resizes the array by the resize factor
@@ -127,10 +125,15 @@ public class FourHeap<E> extends Heap<E> {
 		heapArray = newArray;
 	}
 	
+	private boolean isFull(){
+		return currentIndex >= heapArray.length - 1;
+	}
+	
 	//sorts the heap from the bottom-most parent nodes
 	private void buildHeap() {
 		for (int i = (currentIndex - 1) / 4; i >= 0; i--) {
-			percolateDown(i);
+			percolateDown(i, heapArray[i]);
 		}
 	}
+	
 }
