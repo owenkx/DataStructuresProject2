@@ -82,6 +82,13 @@ public class FourHeap<E> extends Heap<E> {
 		currentIndex = -1;
 	}
 	
+	//for debugging purposes
+	public void printArray() {
+		for (E e: heapArray) {
+			System.out.println(e);
+		}
+	}
+	
 	//Takes in a hole index and an item and 
 	//returns the first valid hole in which to insert the item.
 	private int percolateUp(int hole, E item) {
@@ -102,7 +109,7 @@ public class FourHeap<E> extends Heap<E> {
 			
 			for (int i = 1; i <= 3; i++) {
 				if (firstChild + i <= currentIndex && 
-						comparator.compare(heapArray[targetChild], heapArray[firstChild + i]) > 1)
+						comparator.compare(heapArray[targetChild], heapArray[firstChild + i]) > 0)
 					targetChild = firstChild + i;
 			}
 			if (comparator.compare(heapArray[targetChild], reference) < 0) {

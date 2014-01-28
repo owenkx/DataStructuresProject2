@@ -95,7 +95,6 @@ public class TestFourHeap {
 	
 	private boolean deleteMinTest(Integer[] testArray) {
 		for (int index = 0; !heap.isEmpty(); index++) {
-			System.out.println(heap.findMin());
 			if (heap.deleteMin() != testArray[index])
 				return false;
 		}
