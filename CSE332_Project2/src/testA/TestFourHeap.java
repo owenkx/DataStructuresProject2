@@ -88,6 +88,16 @@ public class TestFourHeap {
 		assertTrue("Making sure that everything works for a 3 level perfect tree", deleteMinTest(testArray));
 	}
 	
+	@Test(timeout = TIMEOUT)
+	public void testHugeArray() {
+		Integer[] testArray = new Integer[100];
+		for (int i = 0; i < 100; i++) {
+			testArray[i] = i;
+			heap.insert(i);
+		}
+		assertTrue("Testing the heap for 100 elements", deleteMinTest(testArray));
+	}
+	
 	private void insertArray(Integer[] elements) {
 		for (int i: elements)
 			heap.insert(i);

@@ -55,7 +55,10 @@ public class FourHeap<E> extends Heap<E> {
 	public void insert(E item) {
 		if (isFull())
 			resize(heapArray.length * RESIZE_FACTOR);
-		int hole = percolateUp(++size, item);
+		int hole = ++size;
+		for(; hole > 0 && comparator.compare(item, heapArray[(hole - 1) / 4]) < 0; hole = (hole - 1) / 4){
+			heapArray[hole] = heapArray[(hole - 1) / 4];
+		}
 		heapArray[hole] = item;
 	}
 
@@ -92,28 +95,20 @@ public class FourHeap<E> extends Heap<E> {
 	
 	//for debugging purposes
 	public void printArray() {
-		for (E e: heapArray) {
-			System.out.println(e);
+		for (int i = 0; i <= size; i++) {
+			System.out.println(heapArray[i]);
 		}
-	}
-	
-	//Takes in a hole index and an item and 
-	//returns the first valid hole in which to insert the item.
-	private int percolateUp(int hole, E item) {
-		while (hole > 0 && comparator.compare(item, heapArray[(hole - 1) / 4]) < 0) {
-			heapArray[hole] = heapArray[(hole - 1) / 4];
-			hole = (hole - 1) / 4;
-		}
-		return hole;
+		System.out.println("Last index is " + size);
 	}
 	
 	//Takes in an index to percolate down from, finds the 
 	//smallest of the four children and swaps the values
 	//until the heap is in order.
 	private int percolateDown(int hole, E reference) {
-		while (hole * 4 + 1 <= size) {
+		int targetChild;
+		for (; hole * 4 + 1 <= size; hole = targetChild) {
 			int firstChild = hole * 4 + 1;
-			int targetChild = firstChild; 
+			targetChild = firstChild; 
 			
 			//find the minimum child
 			for (int i = 1; i <= 3; i++) {
@@ -124,7 +119,6 @@ public class FourHeap<E> extends Heap<E> {
 			//percolate the value down
 			if (comparator.compare(heapArray[targetChild], reference) < 0) {
 				heapArray[hole] = heapArray[targetChild];
-				hole = targetChild;
 			} else {
 				break;
 			}
@@ -149,7 +143,9 @@ public class FourHeap<E> extends Heap<E> {
 	//sorts the heap from the bottom-most parent nodes
 	private void buildHeap() {
 		for (int i = (size - 1) / 4; i >= 0; i--) {
-			percolateDown(i, heapArray[i]);
+			E element = heapArray[i];
+			int hole = percolateDown(i, element);
+			heapArray[hole] = element;
 		}
 	}
 	
