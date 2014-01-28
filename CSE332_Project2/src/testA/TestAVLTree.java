@@ -118,6 +118,6 @@ private static final int TIMEOUT = 2000;
 	private void addAndGetCount(String message, int[] input, int key, int expected){
 		for(int num : input) { dc.incCount(num); }
 		assertEquals(message, expected, dc.getCount(key));
-	}	
+	}
 
 }

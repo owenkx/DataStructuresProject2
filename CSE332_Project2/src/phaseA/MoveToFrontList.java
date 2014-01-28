@@ -64,7 +64,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 			}
 		}
 
-		System.out.println("got here");
+		//System.out.println("got here");
 		// didn't find it; add to front
 		this.size++;
 		this.overallRoot = new MTFNode(data, this.overallRoot);
@@ -134,9 +134,9 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		public int count;
 
 		public MTFNode(E data, MTFNode next) {
-			if (((Integer) data).equals(7)) {
-				System.out.println("7 found!");
-			}
+//			if (((Integer) data).equals(7)) {
+//				System.out.println("7 found!");
+//			}
 			this.next = next;
 			this.prev = null;
 			this.data = data;

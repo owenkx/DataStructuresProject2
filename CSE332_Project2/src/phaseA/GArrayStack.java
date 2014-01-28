@@ -1,7 +1,5 @@
 package phaseA;
 import providedCode.*;
-
-
 import java.util.EmptyStackException;
 
 public class GArrayStack<E> implements GStack {

@@ -18,23 +18,30 @@ import java.util.NoSuchElementException;
 @SuppressWarnings("unchecked")
 
 public class FourHeap<E> extends Heap<E> {
+	//stores every heap value
 	private E[] heapArray;
-	private int currentIndex;
+	
+	//the last filled index
+	private int size;
 	private Comparator<? super E> comparator;
 	private static final int DEFAULT_CAPACITY = 10; 
 	private static final int RESIZE_FACTOR = 2;
 	
+	//takes in a comparator and initializes a heap of default capacity
 	public FourHeap(Comparator<? super E> c) {
-		// TODO: To-be implemented. Replace dummy parameter to superclass constructor
 		this(DEFAULT_CAPACITY, c);
 	}
 	
+	//takes in a heap size and comparator and initializes a heap
+	//to that capacity
 	public FourHeap(int n, Comparator<? super E> c) {
 		this((E[]) new Object[n], c, 0);
 	}
 	
+	//takes in an array and uses the Floyd method to
+	//insert the elements into the heap until the array's last valid index
 	public FourHeap(E[] insertArray, Comparator<?super E> c, int lastIndex) {
-		currentIndex = lastIndex - 1;
+		size = lastIndex - 1;
 		comparator = c;
 		heapArray = (E []) new Object[insertArray.length];
 		for (int i = 0; i < insertArray.length; i++) {
@@ -48,7 +55,8 @@ public class FourHeap<E> extends Heap<E> {
 	public void insert(E item) {
 		if (isFull())
 			resize(heapArray.length * RESIZE_FACTOR);
-		heapArray[percolateUp(++currentIndex, item)] = item;
+		int hole = percolateUp(++size, item);
+		heapArray[hole] = item;
 	}
 
 	@Override
@@ -66,20 +74,20 @@ public class FourHeap<E> extends Heap<E> {
 		if (isEmpty())
 			throw new NoSuchElementException();
 		E min = findMin();
-		int hole = percolateDown(0, heapArray[currentIndex]);
-		heapArray[hole] = heapArray[currentIndex--];
+		int hole = percolateDown(0, heapArray[size]);
+		heapArray[hole] = heapArray[size--];
 		return min;
 	}
 
 	@Override
 	//returns whether or not the heap is empty
 	public boolean isEmpty() {
-		return currentIndex == -1;
+		return size == -1;
 	}
 	
-	//makes the heap empty again
+	//makes the heap empty again, for cleanup
 	public void makeEmpty() {
-		currentIndex = -1;
+		size = -1;
 	}
 	
 	//for debugging purposes
@@ -103,18 +111,19 @@ public class FourHeap<E> extends Heap<E> {
 	//smallest of the four children and swaps the values
 	//until the heap is in order.
 	private int percolateDown(int hole, E reference) {
-		while (hole * 4 + 1 <= currentIndex) {
+		while (hole * 4 + 1 <= size) {
 			int firstChild = hole * 4 + 1;
 			int targetChild = firstChild; 
 			
+			//find the minimum child
 			for (int i = 1; i <= 3; i++) {
-				if (firstChild + i <= currentIndex && 
+				if (firstChild + i <= size && 
 						comparator.compare(heapArray[targetChild], heapArray[firstChild + i]) > 0)
 					targetChild = firstChild + i;
 			}
+			//percolate the value down
 			if (comparator.compare(heapArray[targetChild], reference) < 0) {
 				heapArray[hole] = heapArray[targetChild];
-				//heapArray[targetChild] = reference;
 				hole = targetChild;
 			} else {
 				break;
@@ -132,13 +141,14 @@ public class FourHeap<E> extends Heap<E> {
 		heapArray = newArray;
 	}
 	
+	//returns whether or not the heap is full
 	private boolean isFull(){
-		return currentIndex >= heapArray.length - 1;
+		return size >= heapArray.length - 1;
 	}
 	
 	//sorts the heap from the bottom-most parent nodes
 	private void buildHeap() {
-		for (int i = (currentIndex - 1) / 4; i >= 0; i--) {
+		for (int i = (size - 1) / 4; i >= 0; i--) {
 			percolateDown(i, heapArray[i]);
 		}
 	}
