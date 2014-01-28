@@ -58,14 +58,30 @@ public class WordCount {
  	 *  to process all parameters as shown in the spec.
  	 */
     public static void main(String[] args) {
-        if (args.length != 1) {
+        if (args.length != 3) {
             System.err.println("Usage: filename of document to analyze");
+            System.err.println("Usage: DataCounter implementation argument");
+            System.err.println("Usage: specification of sorting algorithm");
             System.exit(1);
         }
-        DataCounter<String> counter = new BinarySearchTree<String>(new StringComparator());
-        countWords(args[0], counter); 
+        
+        DataCounter<String> counter;
+        if (args[0].equals("-b")) {
+        	counter = new BinarySearchTree<String>(new StringComparator());
+        } else if (args[0].equals("-m")) {
+        	counter = new MoveToFrontList<String>(new StringComparator());
+        } else {
+        	counter = new AVLTree<String>(new StringComparator());
+        }
+        countWords(args[2], counter); 
         DataCount<String>[] counts = getCountsArray(counter);
-        Sorter.insertionSort(counts, new DataCountStringComparator());
+        
+        if (args[1].equals("-is")) {
+        	Sorter.insertionSort(counts, new DataCountStringComparator());
+        } else {
+        	Sorter.heapSort(counts, new DataCountStringComparator());
+        }
+        
         printDataCount(counts);
     }
 }

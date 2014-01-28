@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import phaseA.MoveToFrontList;
-import providedCode.BinarySearchTree;
 import providedCode.Comparator;
 import providedCode.DataCount;
 import providedCode.DataCounter;
