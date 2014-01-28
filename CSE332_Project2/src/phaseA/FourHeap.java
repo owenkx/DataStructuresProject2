@@ -15,6 +15,8 @@ import java.util.NoSuchElementException;
  * TODO: Develop appropriate JUnit tests for your FourHeap.
  */
 
+@SuppressWarnings("unchecked")
+
 public class FourHeap<E> extends Heap<E> {
 	private E[] heapArray;
 	private int currentIndex;
@@ -28,11 +30,11 @@ public class FourHeap<E> extends Heap<E> {
 	}
 	
 	public FourHeap(int n, Comparator<? super E> c) {
-		this((E[]) new Object[n], c, -1);
+		this((E[]) new Object[n], c, 0);
 	}
 	
 	public FourHeap(E[] insertArray, Comparator<?super E> c, int lastIndex) {
-		currentIndex = lastIndex;
+		currentIndex = lastIndex - 1;
 		comparator = c;
 		heapArray = (E []) new Object[insertArray.length];
 		for (int i = 0; i < insertArray.length; i++) {
@@ -44,7 +46,7 @@ public class FourHeap<E> extends Heap<E> {
 	@Override
 	//inserts an item, and keeps the tree complete
 	public void insert(E item) {
-		if (currentIndex == heapArray.length)
+		if (currentIndex == heapArray.length - 1)
 			resize(heapArray.length * RESIZE_FACTOR);
 		int hole = percolateUp(++currentIndex, item);
 		heapArray[hole] = item;
@@ -76,6 +78,11 @@ public class FourHeap<E> extends Heap<E> {
 		return currentIndex == -1;
 	}
 	
+	//makes the heap empty again
+	public void makeEmpty() {
+		currentIndex = -1;
+	}
+	
 	//Takes in a hole index and an item and 
 	//returns the first valid hole in which to insert the item.
 	private int percolateUp(int hole, E item) {
@@ -96,8 +103,9 @@ public class FourHeap<E> extends Heap<E> {
 			int firstChild = targetChild; 
 			
 			for (int i = 1; i <= 3; i++) {
-				if (firstChild + i <= currentIndex && comparator.compare(heapArray[targetChild], heapArray[firstChild + i]) > 1)
-					targetChild++;
+				if (firstChild + i <= currentIndex && 
+						comparator.compare(heapArray[targetChild], heapArray[firstChild + i]) > 1)
+					targetChild = firstChild + i;
 			}
 			if (comparator.compare(heapArray[targetChild], reference) < 0) {
 				E temp = heapArray[hole];
