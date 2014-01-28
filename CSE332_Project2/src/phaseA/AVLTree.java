@@ -42,7 +42,6 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		// Place the node
 		AVLNode currentNode = (AVLNode) overallRoot;
 		while (true) {
-			System.out.println("Loop: " + currentNode);
 			// compare the new data with the data at the current node
 			int cmp = comparator.compare(data, currentNode.data);
 			if(cmp == 0) {            // a. Current node is a match
@@ -63,13 +62,11 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 			}
 		}
 
-		System.out.println("Perc");
 		percHeightUp(currentNode);
 
 		// at this stage, we have put the new node in the proper place
 		// and fixed heights for everything. next we need to rotate
 
-		System.out.println("Fix");
 		while (currentNode != null) {
 			Side isImbalanced = checkImbalance(currentNode);
 			if (isImbalanced != Side.BALANCED) { rotate(currentNode, isImbalanced); }
