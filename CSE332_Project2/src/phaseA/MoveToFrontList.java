@@ -34,9 +34,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		if (this.overallRoot == null) {
 			// first thing
 			this.overallRoot = new MTFNode(data);
-			if (this.overallRoot.next != null) {
-				System.out.println(">>>>>>>>>>>>>");
-			}
 			this.size++;
 			return;
 		}
@@ -44,18 +41,23 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		MTFNode current = overallRoot;
 
 		while (current != null) {
-			//System.out.println(current + "size : " + size);
 			if (comparator.compare(current.data, data) == 0) {
 				// Found it!
 				current.count++;
 
-				// if we aren't on the end, update the next node's prev
-				if (current.next != null) { current.next.prev = current.prev; }
-				// if we aren't at the beginning, update the previous node's next
-				if (current.prev != null) { current.prev.next = current.next; }
-				// and finally update the overall root to the current node
 				if (current != this.overallRoot) {
+					
+					// if we aren't on the end, update the next node's prev
+					if (current.next != null) { current.next.prev = current.prev; }
+					
+					// update the previous node's next
+					current.prev.next = current.next;
+					
+					// and finally update the overall root to the current node
+					this.overallRoot.prev = current;
 					current.next = this.overallRoot;
+					
+					current.prev = null;
 					this.overallRoot = current;
 				}
 				return;
@@ -84,7 +86,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 
 		while (current != null) {
 			if (comparator.compare(current.data, data) == 0) {
-				System.out.println("found");
 				// Found it!
 				// if we aren't on the end, update the next node's prev
 				if (current.next != null) { current.next.prev = current.prev; }
@@ -97,7 +98,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 			}
 			current = current.next;
 		}
-		System.out.println("Not found: " + data);
 		return 0;
 	}
 
