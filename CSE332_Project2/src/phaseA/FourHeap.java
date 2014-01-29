@@ -142,10 +142,12 @@ public class FourHeap<E> extends Heap<E> {
 	
 	//sorts the heap from the bottom-most parent nodes
 	private void buildHeap() {
-		for (int i = (size - 1) / 4; i >= 0; i--) {
-			E element = heapArray[i];
-			int hole = percolateDown(i, element);
-			heapArray[hole] = element;
+		if (size > -1) { 
+			for (int i = (size - 1) / 4; i >= 0; i--) {
+				E element = heapArray[i];
+				int hole = percolateDown(i, element);
+				heapArray[hole] = element;
+			}
 		}
 	}
 	
