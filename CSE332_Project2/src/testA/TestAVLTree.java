@@ -16,8 +16,8 @@ import test.TestDataCounter;
 
 public class TestAVLTree extends TestDataCounter<Integer> {
 
-private static final int TIMEOUT = 2000;
-	
+	private static final int TIMEOUT = 2000;
+
 	/** Creates BinarySearchTree before each test cases **/
 	@Override
 	public DataCounter<Integer> getDataCounter() {
@@ -26,98 +26,57 @@ private static final int TIMEOUT = 2000;
 		});
 	}
 
-
-	
-	/** Test Size =======================================================================================**/
-
+	// Valid of added 0 elements?
 	@Test(timeout = TIMEOUT)
-	public void test_size_empty(){
-		assertEquals("Tree should have size 0 when constructed", 0, dc.getSize());
-	}
-	
-	@Test(timeout = TIMEOUT) 
-	public void test_size_after_adding_single_num(){
-		addAndTestSize("Tree should have size 1 after adding single 5", new int[]{5}, 1);
-	}
-	
-	@Test(timeout = TIMEOUT)
-	public void test_size_after_adding_many_same_num(){
-		addAndTestSize("Tree should have size 1 after adding multiple 5", new int[]{5,5,5}, 1);
+	public void testInitiallyValid() {
+		addAndCheck("Is empty valid?", new int[0]);
 	}
 
 	@Test(timeout = TIMEOUT)
-	public void test_size_after_adding_unique_nums(){
-		int[] testArray = {0,1,2,3,4};
-		addAndTestSize("Added " + Arrays.toString(testArray), testArray, 5);
+	public void testOneElement() {
+		addAndCheck("Valid after one element?", new int[] {1});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_size_after_adding_duplicate_nums(){
-		int[] testArray = {0,0,1,1,2,2,3,3,4,4};
-		addAndTestSize("Added " + Arrays.toString(testArray), testArray, 5);
-	}
-	
-	
-	
-	/** Test getCount =======================================================================================**/
-	
-	@Test(timeout = TIMEOUT)
-	public void test_get_count_after_adding_many_same_num(){
-		int key = 9;
-		int[] testArray = {9, 9, 9, 9, 9, 9, 9};
-		addAndGetCount("Added " + Arrays.toString(testArray) + ", key=" + key, testArray, key, 7);
+	public void testTwoElements() {
+		addAndCheck("Valid after adding two elements?", new int[] {5, 10});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_get_count_after_adding_many_diff_nums(){
-		int key = 5;
-		int[] testArray = {0, 5, -1, 5, 1, 5, 2};
-		addAndGetCount("Added " + Arrays.toString(testArray) + ", key=" + key, testArray, key, 3);
-	}
-	
-	
-	
-	/** Test Iterator =======================================================================================**/
-
-	@Test(timeout = TIMEOUT, expected = java.util.NoSuchElementException.class)
-	public void test_iterator_empty() {
-		SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
-		iter.next(); 
+	public void testThreeElementsBalanced() {
+		addAndCheck("Valid after adding three elements?", new int[] {5, 10, 1});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_iterator_get_all_data() {
-		int[] startArray = {7, -5, -5, -6, 6, 10, -9, 4, 8, 6};
-		
-		// Expected array has no duplicates and is sorted
-		for(int i = 0; i < startArray.length; i++) { dc.incCount(startArray[i]); }
-		int[] expected = {-9, -6, -5, 4, 6, 7, 8, 10};
-		
-		// Actual array returned by the iterator
-		int i = 0;
-		SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
-		int[] actual = new int[expected.length];
-		while(iter.hasNext()) { actual[i++] = iter.next().data; }
-		
-		// Sort and test
-		Arrays.sort(actual);
-		System.out.println("Actual: " + Arrays.toString(actual));
-		System.out.println("Expected: " + Arrays.toString(expected));
-		assertArrayEquals("Added " + Arrays.toString(startArray), expected, actual);
+	public void testThreeElementsLL() {
+		addAndCheck("Valid after adding three elements?", new int[] {5, 3, 1});
 	}
 	
+	@Test(timeout = TIMEOUT)
+	public void testThreeElementsRR() {
+		addAndCheck("Valid after adding three elements?", new int[] {1, 2, 3});
+	}
 	
+	@Test(timeout = TIMEOUT)
+	public void testThreeElementsLR() {
+		addAndCheck("Valid after adding three elements?", new int[] {5, 2, 3});
+	}
 	
-	/** Private methods =======================================================================================**/
-
-	private void addAndTestSize(String message, int[] input, int unique){
-		for(int num : input) { dc.incCount(num); }
-		assertEquals(message, unique, dc.getSize());
+	@Test(timeout = TIMEOUT)
+	public void testThreeElementsRL() {
+		addAndCheck("Valid after adding three elements?", new int[] {5, 10, 7});
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testLargeCase() {
+		addAndCheck("Valid after adding three elements?", new int[] {5, 10, 7, 1, 2, 3, 4, 7, 8, 9});
+		addAndCheck("Valid after adding three elements?", new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+		addAndCheck("Valid after adding three elements?", new int[] {10, 9, 8, 7, 6, 5, 4, 3, 2, 1});
 	}
 
-	private void addAndGetCount(String message, int[] input, int key, int expected){
-		for(int num : input) { dc.incCount(num); }
-		assertEquals(message, expected, dc.getCount(key));
+	/** Helper methods **/
+	private void addAndCheck(String message, int[] input) {
+		for (int i : input) { dc.incCount(i); }
+		assertTrue(message, ((AVLTree) dc).isValidAVL());
 	}
-
 }

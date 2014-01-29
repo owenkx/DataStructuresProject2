@@ -5,26 +5,8 @@ import providedCode.*;
 
 
 /**
- * TODO: Replace this comment with your own as appropriate.
- * AVLTree must be subclass of BinarySearchTree<E> and must use inheritance 
- * and calls to superclass methods to avoid unnecessary duplication or copying
- * of functionality.
- * 1. Create a subclass of BSTNode, perhaps named AVLNode.
- * 2. Override incCount method such that it creates AVLNode instances instead 
- *    of BSTNode instances.
- * 3. Do not "replace" the left and right fields in BSTNode with new left and 
- *    right fields in AVLNode. This will instead mask the super-class fields 
- *    (i.e., the resulting node would actually have four node fields, with 
- *    code accessing one pair or the other depending on the type of the
- *    references used to access the instance). Such masking will lead to
- *    highly perplexing and erroneous behavior. Instead, continue using the
- *    existing BSTNode left and right fields. Cast their values to AVLNode 
- *    whenever necessary in your AVLTree. Note: This may require many casts, 
- *    but that is o.k. given that our goal is to reuse methods from BinarySearchTree.
- * 4. Do not override dump method of BinarySearchTree & toString method of 
- * 	  DataCounter. They are used for grading. 
- * TODO: Develop appropriate JUnit tests for your AVLTree (TestAVLTree in 
- *    testA package).
+ * And AVLTree is a type of Binary Search Tree that assures good balance. It can be used in
+ * the same way as a BST -- but it guarantees O(log(n)) time for common operations. 
  */
 public class AVLTree<E> extends BinarySearchTree<E> {
 
@@ -32,6 +14,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		super(c);
 	}
 
+	/** {@inheritDoc} */
 	public void incCount(E data) {
 		// if first node, we can just add it
 		if (overallRoot == null) {
@@ -62,6 +45,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 			}
 		}
 
+		// set the height of all nodes above our placed node in the tree
 		percHeightUp(currentNode);
 
 		// at this stage, we have put the new node in the proper place
@@ -69,23 +53,44 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 
 		while (currentNode != null) {
 			Side isImbalanced = checkImbalance(currentNode);
-			if (isImbalanced != Side.BALANCED) { rotate(currentNode, isImbalanced); }
+			if (isImbalanced != Side.BALANCED) { 
+				// rotate and fix
+				percHeightDown( rotate(currentNode, isImbalanced) );
+				break; 
+			}
 			currentNode = currentNode.parent;
 		}
 
 	}
 
-	/** private helper methods ============= **/
-	private void rotate(AVLNode current, Side imbalance) {
+	/** private helper methods :: ROTATIONS============= **/
+	
+	/** Balances an AVL(sub)tree
+	 * @param current The head node fo the subtree to balance
+	 * @param imbalance The side that is too tall
+	 * @return The top node of the new tree
+	 */
+	private AVLNode rotate(AVLNode current, Side imbalance) {
 		if (imbalance == Side.LEFT) {
+			current = (AVLNode) current.left;
 			int left_height = (current.left == null) ? -1 : ((AVLNode) current.left).height;
 			int right_height = (current.right == null) ? -1 : ((AVLNode) current.right).height;
-			if (left_height > right_height) { rotateLeftLeft(current); }
-			else { rotateLeftRight(current); }
+			if (left_height > right_height) { return rotateLeftLeft(current.parent); }
+			else { return rotateLeftRight(current.parent); }
+		} else {
+			current = (AVLNode) current.right;
+			int left_height = (current.left == null) ? -1 : ((AVLNode) current.left).height;
+			int right_height = (current.right == null) ? -1 : ((AVLNode) current.right).height;
+			if (left_height > right_height) { return rotateRightLeft(current.parent); }
+			else { return rotateRightRight(current.parent); }
 		}
 	}
 
-	private void rotateLeftRight(AVLNode parent) {
+	/** Fix a subtree in a certain case
+	 * @param parent The top of the subtree to fix
+	 * @return The top of the resulting subtree
+	 */
+	private AVLNode rotateLeftRight(AVLNode parent) {
 
 		AVLNode parentNode = parent;
 		AVLNode current = (AVLNode) parentNode.left;
@@ -117,10 +122,15 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		moveToTop.right = parent;
 		current.parent = moveToTop;
 		parent.parent = moveToTop;
-
+		
+		return moveToTop;
 	}
 
-	private void rotateRightLeft(AVLNode parent) {
+	/** Fix a subtree in a certain case
+	 * @param parent The top of the subtree to fix
+	 * @return The top of the resulting subtree
+	 */
+	private AVLNode rotateRightLeft(AVLNode parent) {
 
 		AVLNode parentNode = parent;
 		AVLNode current = (AVLNode) parentNode.right;
@@ -152,11 +162,16 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		moveToTop.left = parent;
 		current.parent = moveToTop;
 		parent.parent = moveToTop;
+		
+		return moveToTop;
 
 	}
 
-
-	private void rotateLeftLeft(AVLNode parent) {
+	/** Fix a subtree in a certain case
+	 * @param parent The top of the subtree to fix
+	 * @return The top of the resulting subtree
+	 */
+	private AVLNode rotateLeftLeft(AVLNode parent) {
 		// the left subtree is too tall -- and the left subtree of that is the problem
 		AVLNode parentNode = parent;
 		AVLNode current = (AVLNode) parentNode.left;
@@ -181,9 +196,15 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		// now the right child of current is transnferred to parent
 		current.right = parent;
 		parent.parent = current;
+		
+		return current;
 	}
 
-	private void rotateRightRight(AVLNode parent) {
+	/** Fix a subtree in a certain case
+	 * @param parent The top of the subtree to fix
+	 * @return The top of the resulting subtree
+	 */
+	private AVLNode rotateRightRight(AVLNode parent) {
 		// the right subtree is too tall -- and the right subtree of that is the problem
 		AVLNode parentNode = parent;
 		AVLNode current = (AVLNode) parentNode.right;
@@ -209,25 +230,39 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		current.left = parent;
 		parent.parent = current;
 
+		return current;
 	}
 
+	/** private helper methods: setting heights **/
+	/** Fixes the height of all nodes above a given node
+	 * @param current the node which we fix the height of all nodes above
+	 */
 	private void percHeightUp(AVLNode current) {
 		while (current != null) {
 			setHeight(current);
 			current = current.parent;
 		}
 	}
-	
-	private void percHeightDown(AVLNode current) {
+
+	/** Fixes the height of all nodes below a certain node
+	 * @param current The node to fix (and fix height of nodes below)
+	 * @return The height of the given node
+	 */
+	private int percHeightDown(AVLNode current) {
 		if (current == null) {
-			return;
+			return -1;
 		}
-		if (current.left != null) { percHeightDown((AVLNode) current.left); }
-		if (current.right != null) { percHeightDown((AVLNode) current.right); }
-		
-		setHeight(current);
+		System.out.println(current.left + " " + current.right);
+		int l = percHeightDown((AVLNode) current.left); 
+		int r = percHeightDown((AVLNode) current.right); 
+
+		current.height = 1 + Math.max(l,  r);
+		return current.height;
 	}
 
+	/** Sets of the height of a given node based on the height of its subnodes
+	 * @param current The node to set the height of 
+	 */
 	private void setHeight(AVLNode current) {
 		int left_height = (current.left == null) ? -1 : ((AVLNode) current.left).height;
 		int right_height = (current.right == null) ? -1 : ((AVLNode) current.right).height;
@@ -241,6 +276,41 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		if (left_height - right_height > 1) { return Side.LEFT; }
 		else if (right_height - left_height > 1) { return Side.RIGHT; }
 		else { return Side.BALANCED; }
+	}
+	
+	/** Private helper methods: error checking =============================**/
+
+	/** Check if this is a valid tree
+	 * @return True iff. this is a valid AVLTree
+	 */
+	public boolean isValidAVL(){
+		try {
+			checkAVL((AVLNode) this.overallRoot);
+		} catch (IllegalStateException e) {
+			return false;
+		}
+		return true;
+	}
+
+	/** Check if a single subtree is a valid AVL tree - balanced and with correct heights
+	 * @param c the subtree to check
+	 * @return the height of the subtree
+	 */
+	private int checkAVL(AVLNode c) {
+		if (c == null) {
+			return -1;
+		}
+		int left = checkAVL((AVLNode) c.left);
+		int right = checkAVL((AVLNode) c.right);
+		int left_height = (c.left == null) ? -1 : ((AVLNode) c.left).height;
+		int right_height = (c.right == null) ? -1 : ((AVLNode) c.right).height;
+
+		if (left != left_height || right != right_height) {
+			throw new IllegalStateException("Height not correct: " + left + " " + left_height + " " + right + " " + right_height);
+		} else if (Math.abs(left - right) > 1) {
+			throw new IllegalStateException("Not balanced: " + left + " " + right);
+		}
+		return 1 + Math.max(left, right);
 	}
 
 	/** Private classes ==================== **/
