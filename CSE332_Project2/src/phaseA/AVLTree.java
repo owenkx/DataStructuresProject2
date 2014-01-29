@@ -8,6 +8,7 @@ import providedCode.*;
  * And AVLTree is a type of Binary Search Tree that assures good balance. It can be used in
  * the same way as a BST -- but it guarantees O(log(n)) time for common operations. 
  */
+@SuppressWarnings("unchecked")
 public class AVLTree<E> extends BinarySearchTree<E> {
 
 	public AVLTree(Comparator<? super E> c) {
@@ -252,7 +253,6 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		if (current == null) {
 			return -1;
 		}
-		System.out.println(current.left + " " + current.right);
 		int l = percHeightDown((AVLNode) current.left); 
 		int r = percHeightDown((AVLNode) current.right); 
 
