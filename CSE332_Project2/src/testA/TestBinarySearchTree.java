@@ -75,8 +75,7 @@ public class TestBinarySearchTree extends TestDataCounter<Integer> {
 		int[] testArray = {0, 5, -1, 5, 1, 5, 2};
 		addAndGetCount("Added " + Arrays.toString(testArray) + ", key=" + key, testArray, key, 3);
 	}
-	
-	
+
 	
 	/** Test Iterator =======================================================================================**/
 
