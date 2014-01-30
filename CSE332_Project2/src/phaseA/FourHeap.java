@@ -3,16 +3,13 @@ import providedCode.*;
 import java.util.NoSuchElementException;
 
 /**
- * TODO: Replace this comment with your own as appropriate.
  * 1. It is exactly like the binary heap we studied, except nodes should have 4 children 
  * 	  instead of 2. Only leaves and at most one other node will have fewer children. 
  * 2. Use array-based implementation, beginning at index 0 (Root should be at index 0). 
  *    Construct the FourHeap by passing appropriate argument to superclass constructor.
- *    Hint: Complete written homework #2 before attempting this.   
  * 3. Throw appropriate exceptions in FourHeap whenever needed. For example, 
  * 	  when deleteMin on an empty heap, you could use UnderFlowException as is done in the Weiss text, 
  *    or you could use NoSuchElementException (in which case it will be fine if you want to import it). 
- * TODO: Develop appropriate JUnit tests for your FourHeap.
  */
 
 @SuppressWarnings("unchecked")
@@ -41,7 +38,7 @@ public class FourHeap<E> extends Heap<E> {
 	//takes in an array and uses the Floyd method to
 	//insert the elements into the heap until the array's last valid index
 	public FourHeap(E[] insertArray, Comparator<?super E> c, int lastIndex) {
-		size = lastIndex - 1;
+		size = lastIndex;
 		comparator = c;
 		heapArray = (E []) new Object[insertArray.length];
 		for (int i = 0; i < insertArray.length; i++) {
@@ -55,7 +52,7 @@ public class FourHeap<E> extends Heap<E> {
 	public void insert(E item) {
 		if (isFull())
 			resize(heapArray.length * RESIZE_FACTOR);
-		int hole = ++size;
+		int hole = size++;
 		for(; hole > 0 && comparator.compare(item, heapArray[(hole - 1) / 4]) < 0; hole = (hole - 1) / 4){
 			heapArray[hole] = heapArray[(hole - 1) / 4];
 		}
@@ -77,28 +74,28 @@ public class FourHeap<E> extends Heap<E> {
 		if (isEmpty())
 			throw new NoSuchElementException();
 		E min = findMin();
-		int hole = percolateDown(0, heapArray[size]);
-		heapArray[hole] = heapArray[size--];
+		int hole = percolateDown(0, heapArray[--size]);
+		heapArray[hole] = heapArray[size];
 		return min;
 	}
 
 	@Override
 	//returns whether or not the heap is empty
 	public boolean isEmpty() {
-		return size == -1;
+		return size == 0;
 	}
 	
 	//makes the heap empty again, for cleanup
 	public void makeEmpty() {
-		size = -1;
+		size = 0;
 	}
 	
 	//for debugging purposes
 	public void printArray() {
-		for (int i = 0; i <= size; i++) {
+		for (int i = 0; i < size; i++) {
 			System.out.println(heapArray[i]);
 		}
-		System.out.println("Last index is " + size);
+		System.out.println("Last index is " + (size - 1));
 	}
 	
 	//Takes in an index to percolate down from, finds the 
@@ -106,13 +103,13 @@ public class FourHeap<E> extends Heap<E> {
 	//until the heap is in order.
 	private int percolateDown(int hole, E reference) {
 		int targetChild;
-		for (; hole * 4 + 1 <= size; hole = targetChild) {
+		for (; hole * 4 + 1 < size; hole = targetChild) {
 			int firstChild = hole * 4 + 1;
 			targetChild = firstChild; 
 			
 			//find the minimum child
 			for (int i = 1; i <= 3; i++) {
-				if (firstChild + i <= size && 
+				if (firstChild + i < size && 
 						comparator.compare(heapArray[targetChild], heapArray[firstChild + i]) > 0)
 					targetChild = firstChild + i;
 			}
@@ -143,7 +140,7 @@ public class FourHeap<E> extends Heap<E> {
 	//sorts the heap from the bottom-most parent nodes
 	private void buildHeap() {
 		if (size > -1) { 
-			for (int i = (size - 1) / 4; i >= 0; i--) {
+			for (int i = (size - 2) / 4; i >= 0; i--) {
 				E element = heapArray[i];
 				int hole = percolateDown(i, element);
 				heapArray[hole] = element;

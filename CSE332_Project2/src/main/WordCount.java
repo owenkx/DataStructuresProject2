@@ -27,19 +27,14 @@ public class WordCount {
         }
     }
     
-    
-    // TODO: Replace this comment with your own as appropriate.
-    // Implement method that returns an array of DataCount objects containing each unique word.
-    // If generics confuse you, write non-generic version first and then adjust it.
+    //Takes in a DataCounter, and returns an array of DataCounts
  	private static <E> DataCount<E>[] getCountsArray(DataCounter<E> counter) {
- 		DataCount<E>[] dataCounter = (DataCount<E>[]) new DataCount[counter.getSize()];
+ 		DataCount<E>[] dataCounts = (DataCount<E>[]) new DataCount[counter.getSize()];
  		SimpleIterator<DataCount<E>> iter = counter.getIterator();
- 		int index = 0;
- 		while (iter.hasNext()) {
- 			dataCounter[index] = iter.next();
- 			index++;
+ 		for (int index = 0; iter.hasNext(); index++) {
+ 			dataCounts[index] = iter.next();
  		}
- 		return dataCounter;
+ 		return dataCounts;
  	}
     
  	
@@ -59,13 +54,15 @@ public class WordCount {
  	 */
     public static void main(String[] args) {
         if (args.length != 3) {
-            System.err.println("Usage: filename of document to analyze");
             System.err.println("Usage: DataCounter implementation argument");
             System.err.println("Usage: specification of sorting algorithm");
+            System.err.println("Usage: name of .txt file");
             System.exit(1);
         }
         
         DataCounter<String> counter;
+        
+        //checks argument 1 for which data counter implementation to use
         if (args[0].equals("-b")) {
         	counter = new BinarySearchTree<String>(new StringComparator());
         } else if (args[0].equals("-m")) {
@@ -76,6 +73,7 @@ public class WordCount {
         countWords(args[2], counter); 
         DataCount<String>[] counts = getCountsArray(counter);
         
+        //checks argument 2 for the sorting algorithm
         if (args[1].equals("-is")) {
         	Sorter.insertionSort(counts, new DataCountStringComparator());
         } else {
