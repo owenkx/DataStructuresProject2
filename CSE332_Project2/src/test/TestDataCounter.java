@@ -20,6 +20,8 @@ public abstract class TestDataCounter<E> {
                 dc = getDataCounter();
         }
         
+        /** Test Count =======================================================================================**/
+        
         @Test(timeout = TIMEOUT)
         public void testEmptySizeInitial() {
                 assertEquals("Test the intial size, must be 0", dc.getSize(), 0);
@@ -35,6 +37,8 @@ public abstract class TestDataCounter<E> {
                 int[] testArray = {1, 2, 3, 4, 5};
                 addAndTestSize("Test size of unique inserts", testArray, 5);
         }
+        
+        /** Test Count =======================================================================================**/
         
         @Test(timeout = TIMEOUT)
         public void testCountAfterOneInsert() {
@@ -57,18 +61,20 @@ public abstract class TestDataCounter<E> {
         public void testMultipleDuplicates() {
                 int[] testArray = {1, 1, 2, 2, 3, 3};
                 addAndGetCount("Test count of multiple duplicate inserts", testArray, 1, 2);
-                addAndGetCount("", testArray, 2, 4);
-                addAndGetCount("", testArray, 3, 6);
+                addAndGetCount("Test count after same array reinsertion", testArray, 2, 4);
+                addAndGetCount("Third time, for luck", testArray, 3, 6);
         }
         
+        /** Test Iterator =======================================================================================**/
+        
         @Test(timeout = TIMEOUT, expected = java.util.NoSuchElementException.class)
-        public void test_iterator_empty() {
+        public void testIteratorEmpty() {
                 SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
                 iter.next(); 
         }
         
         @Test(timeout = TIMEOUT)
-        public void test_iterator_get_all_data() {
+        public void testIteratorGetAllData() {
                 int[] startArray = {7, -5, -5, -6, 6, 10, -9, 4, 8, 6};
                 
                 for(int i = 0; i < startArray.length; i++) { dc.incCount(startArray[i]); }

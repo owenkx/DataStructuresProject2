@@ -2,8 +2,6 @@ package test;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.Random;
-
 import main.Sorter;
 
 import org.junit.Before;
@@ -54,45 +52,45 @@ public class TestSorter {
 	@Test(timeout = TIMEOUT)
 	public void testSortToTen() {
 		Integer[] testArray = {1, 123, 14, 9, 2345, 20, 55};
-		Integer[] copyArray = {1, 123, 14, 9, 2345, 20, 55};
+		Integer[] copyArray = {1, 9, 14, 20, 55, 123, 2345};
 		sorter.heapSort(testArray, intcomp);
-		sorter.insertionSort(copyArray, intcomp);
 		assertTrue("Testing heapsort against insertion sort for 6 elements", Arrays.equals(testArray, copyArray));
 	}
 	
 	@Test(timeout = TIMEOUT)
 	public void testSortDuplicates() {
 		Integer[] testArray = {2, 2, 1, 1, 3, 3};
-		Integer[] copyArray = {2, 2, 1, 1, 3, 3};
+		Integer[] copyArray = {1, 1, 2, 2, 3, 3};
 		sorter.heapSort(testArray, intcomp);
-		sorter.insertionSort(copyArray, intcomp);
 		assertTrue("Testing heapsort for duplicates", Arrays.equals(testArray, copyArray));
 	}
 	
 	@Test(timeout = TIMEOUT)
 	public void testSortSameDuplicate() {
 		Integer[] testArray = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
-		Integer[] copyArray = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
+		Integer[] copyArray = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 		sorter.heapSort(testArray, intcomp);
-		sorter.insertionSort(copyArray, intcomp);
 		assertTrue("Testing heapsort for many of the same duplicate", Arrays.equals(testArray, copyArray));
 	}
 
 	@Test(timeout = TIMEOUT)
-	public void testSortLargeAscendingOrder() {
+	public void testSortLargeDescendingOrder() {
 		Integer[] testArray = new Integer[100];
 		Integer[] copyArray = new Integer[100];
-		for (int i = 0; i <= 99; i++) {
+		for (int i = 99; i >= 0; i--) {
 			testArray[i] = i;
+		}
+		
+		for (int i = 0; i <= 99; i++) {
 			copyArray[i] = i;
 		}
+		
 		sorter.heapSort(testArray, intcomp);
-		sorter.insertionSort(copyArray, intcomp);
-		assertTrue("Testing heapsort for descending order", Arrays.equals(testArray, copyArray));
+		assertTrue("Testing heapsort for ascending order", Arrays.equals(testArray, copyArray));
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortLargeDescendingOrder() {
+	public void testHeapSortInsertionSort() {
 		Integer[] testArray = new Integer[100];
 		Integer[] copyArray = new Integer[100];
 		for (int i = 99; i >= 0; i--) {
@@ -104,18 +102,4 @@ public class TestSorter {
 		assertTrue("Testing heapsort for descending order", Arrays.equals(testArray, copyArray));
 	}
 	
-	@Test(timeout = TIMEOUT)
-	public void testSortRandomNumbers() {
-		Integer[] testArray = new Integer[10];
-		Integer[] copyArray = new Integer[10];
-		Random r = new Random();
-		for (int i = 0; i < 10; i++) {
-			int randomInt = r.nextInt(1000);
-			testArray[i] = randomInt;
-			copyArray[i] = randomInt;
-		}
-		sorter.heapSort(testArray, intcomp);
-		sorter.insertionSort(copyArray, intcomp);
-		assertTrue("Testing heapsort for 10 random numbers", Arrays.equals(testArray, copyArray));
-	}
 }

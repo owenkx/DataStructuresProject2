@@ -29,14 +29,12 @@ public class TestFourHeap {
 	public void testInsert() {
 		heap.insert(1);
 		assertEquals("Testing insert, inserting 1", heap.findMin(), (Integer) 1);
-		heap.makeEmpty();
 	}
 
 	@Test(timeout = TIMEOUT)
 	public void testNonEmpty() {
 		heap.insert(0);
 		assertFalse("Heap should be nonempty", heap.isEmpty());
-		heap.makeEmpty();
 	}
 	
 	@Test(timeout = TIMEOUT)
@@ -55,9 +53,9 @@ public class TestFourHeap {
 		heap.insert(0);
 		Integer found = heap.findMin();
 		assertEquals("Testing deleteMin is the same as findMin", found, deleted);
-		heap.makeEmpty();
 	}
 	
+	//Tests percolation for unsorted insertions.
 	@Test(timeout = TIMEOUT)
 	public void testPercolateUp() {
 		Integer[] testArray = {5, 6, 1};
@@ -66,20 +64,16 @@ public class TestFourHeap {
 		assertTrue("Testing percolate up for one level", deleteMinTest(expected));
 	}
 	
+	//Tests the heap for two complete levels and one element 
 	@Test(timeout = TIMEOUT)
 	public void testingInsertThreeLevels() {
-		Integer[] testArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+		Integer[] testArray = {0, 1, 2, 3, 4, 5};
 		insertArray(testArray);
 		assertTrue("Testing insertion and deletion on three levels", deleteMinTest(testArray));
 	}
 	
-	@Test(timeout = TIMEOUT)
-	public void testingArrayConstructor() {
-		Integer[] testArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-		setupArrayConstructor(testArray);
-		assertTrue("Testing the array constructor", deleteMinTest(testArray));
-	}
-	
+	//Since the initial capacity is 10, the array should resize twice at
+	//21 elements
 	@Test(timeout = TIMEOUT)
 	public void testHeapAfterResize() {
 		Integer[] testArray = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -110,6 +104,25 @@ public class TestFourHeap {
 		Integer[] testArray = {5, 5, 5, 5, 5, 5, 5};
 		insertArray(testArray);
 		assertTrue("Testing for 7 of the same number", deleteMinTest(testArray));
+	}
+	
+    /** Test Floyd Method =======================================================================================**/
+	
+	//Tests the Floyd method of heap construction
+	@Test(timeout = TIMEOUT)
+	public void testFloydConstructor() {
+		Integer[] testArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+		setupArrayConstructor(testArray);
+		assertTrue("Testing the array constructor", deleteMinTest(testArray));
+	}
+	
+	public void testFloydHuge() {
+		Integer[] testArray = new Integer[100];
+		for (int i = 0; i < 100; i++) {
+			testArray[i] = i;
+		}
+		setupArrayConstructor(testArray);
+		assertTrue("Testing the FloydMethod for 100 elements", deleteMinTest(testArray));
 	}
 	
 	private void insertArray(Integer[] elements) {
