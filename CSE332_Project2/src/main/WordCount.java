@@ -48,9 +48,10 @@ public class WordCount {
     
     
     /** 
-     *  TODO: Replace this comment with your own as appropriate.
- 	 *  Edit this method (including replacing the dummy parameter checking below) 
- 	 *  to process all parameters as shown in the spec.
+     * Takes in flags for the implementation of DataCounter and sorting algorithm
+     * as well as the name of the .txt file. Parses the text file and stores data
+     * count objects in the data counter implementation. Then uses a sorting algorithm
+     * to implement a dictionary ADT
  	 */
     public static void main(String[] args) {
         if (args.length != 3) {

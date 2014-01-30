@@ -41,10 +41,10 @@ public class TestFourHeap {
 	public void testOrderAfterTwoInserts() {
 		heap.insert(0);
 		heap.insert(1);
-		assertEquals("Testing order after two inserts", heap.findMin(), (Integer) 0);
-		heap.makeEmpty();
+		assertEquals("Testing order after two inserts", heap.deleteMin(), (Integer) 0);
 	}
 	
+	//Tests deletion
 	@Test(timeout = TIMEOUT)
 	public void testDeleteMin() {
 		heap.insert(0);
@@ -59,9 +59,9 @@ public class TestFourHeap {
 	@Test(timeout = TIMEOUT)
 	public void testPercolateUp() {
 		Integer[] testArray = {5, 6, 1};
-		Integer[] expected = {1, 5, 6};
+		Integer[] copyArray = {1, 5, 6};
 		insertArray(testArray);
-		assertTrue("Testing percolate up for one level", deleteMinTest(expected));
+		assertTrue("Testing percolate up for one level", deleteMinTest(copyArray));
 	}
 	
 	//Tests the heap for two complete levels and one element 
@@ -87,8 +87,8 @@ public class TestFourHeap {
 		Integer[] testArray = new Integer[100];
 		for (int i = 0; i < 100; i++) {
 			testArray[i] = i;
-			heap.insert(i);
 		}
+		insertArray(testArray);
 		assertTrue("Testing the heap for 100 elements", deleteMinTest(testArray));
 	}
 	
@@ -111,9 +111,10 @@ public class TestFourHeap {
 	//Tests the Floyd method of heap construction
 	@Test(timeout = TIMEOUT)
 	public void testFloydConstructor() {
-		Integer[] testArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+		Integer[] testArray = {2, 1, 0, 4, 5, 3, 6, 8, 7};
+		Integer[] copyArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 		setupArrayConstructor(testArray);
-		assertTrue("Testing the array constructor", deleteMinTest(testArray));
+		assertTrue("Testing the array constructor", deleteMinTest(copyArray));
 	}
 	
 	public void testFloydHuge() {
@@ -125,19 +126,25 @@ public class TestFourHeap {
 		assertTrue("Testing the FloydMethod for 100 elements", deleteMinTest(testArray));
 	}
 	
+	//Takes in an array and inserts all of its elements into the heap
 	private void insertArray(Integer[] elements) {
 		for (int i: elements)
 			heap.insert(i);
 	}
 	
-	private boolean deleteMinTest(Integer[] testArray) {
+	//Takes in an array that the heap should evaluate to,
+	//deletes every value in the heap and evaluates it against
+	//the expected array. If every element is verified, returns
+	//true
+	private boolean deleteMinTest(Integer[] expectedArray) {
 		for (int index = 0; !heap.isEmpty(); index++) {
-			if (heap.deleteMin() != testArray[index])
+			if (heap.deleteMin() != expectedArray[index])
 				return false;
 		}
 		return true;
 	}
 	
+	//Sets up the heap using the Floyd method
 	private void setupArrayConstructor(Integer[] list) {
 		heap = new FourHeap<Integer>(list, new Comparator<Integer>() {
 			public int compare(Integer e1, Integer e2) { 

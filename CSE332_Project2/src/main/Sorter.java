@@ -29,6 +29,8 @@ public class Sorter {
         }
     }
     
+    //Takes in an array and comparator, then sorts the array by placing
+    //all of the elements in a heap and then removing them.
     public static <E> void heapSort(E[] array, Comparator<E> comparator) {
     	FourHeap<E> heap = new FourHeap<E>(array, comparator, array.length);
     	for (int i = 0; i < array.length; i++) {
