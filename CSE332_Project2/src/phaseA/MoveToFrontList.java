@@ -5,17 +5,8 @@ import providedCode.DataCounter;
 import providedCode.SimpleIterator;
 
 /**
- * TODO: Replace this comment with your own as appropriate.
- * 1. The list is typically not sorted.
- * 2. Add new items (with a count of 1) to the front of the list.
- * 3. Whenever an existing item has its count incremented by incCount or 
- *    retrieved by getCount, move it to the front of the list. That means 
- *    you remove the node from its current position and make it the first 
- *    node in the list.
- * 4. You need to implement an iterator. The iterator should not move elements
- *    to the front. The iterator should return elements in the order they are 
- *    stored in the list, starting with the first element in the list.
- * TODO: Develop appropriate JUnit tests for your MoveToFrontList.
+ * A MoveToFrontList is a DataCounter that stores the most recently accessed element
+ * in the most easily accessible place.
  */
 public class MoveToFrontList<E> extends DataCounter<E> {
 
@@ -51,7 +42,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 					if (current.next != null) { current.next.prev = current.prev; }
 					
 					// update the previous node's next
-					current.prev.next = current.next;
+					if (current.prev != null) { current.prev.next = current.next; }
 					
 					// and finally update the overall root to the current node
 					this.overallRoot.prev = current;
@@ -66,7 +57,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 			}
 		}
 
-		//System.out.println("got here");
 		// didn't find it; add to front
 		this.size++;
 		this.overallRoot = new MTFNode(data, this.overallRoot);
@@ -134,9 +124,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		public int count;
 
 		public MTFNode(E data, MTFNode next) {
-//			if (((Integer) data).equals(7)) {
-//				System.out.println("7 found!");
-//			}
 			this.next = next;
 			this.prev = null;
 			this.data = data;
@@ -146,12 +133,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		public MTFNode(E data) {
 			this(data, null);
 		}
-		
-		public String toString() {
-			String result = "";
-			if (next == null) { result += "Next: null "; } else { result += "Next: nonnull " + next.data; }
-			if (prev == null) { result += "prev: null "; } else { result += "prev: nonnull "; }
-			return result + " data: " + data;
-		}
+
 	}
 }

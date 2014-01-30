@@ -25,97 +25,71 @@ public class TestMoveToFrontList extends TestDataCounter<Integer> {
 		});
 	}
 
-
-	
-	/** Test Size =======================================================================================**/
-
 	@Test(timeout = TIMEOUT)
-	public void test_size_empty(){
-		assertEquals("Tree should have size 0 when constructed", 0, dc.getSize());
-	}
-	
-	@Test(timeout = TIMEOUT) 
-	public void test_size_after_adding_single_num(){
-		addAndTestSize("Tree should have size 1 after adding single 5", new int[]{5}, 1);
+	public void firstElementAtFrontTest(){
+		checkFirstElementCorrectincCount("Only element should be first element", new int[]{5});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_size_after_adding_many_same_num(){
-		addAndTestSize("Tree should have size 1 after adding multiple 5", new int[]{5,5,5}, 1);
-	}
-
-	@Test(timeout = TIMEOUT)
-	public void test_size_after_adding_unique_nums(){
-		int[] testArray = {0,1,2,3,4};
-		addAndTestSize("Added " + Arrays.toString(testArray), testArray, 5);
+	public void multipleUniqueAscAtFrontTest(){
+		checkFirstElementCorrectincCount("Last element should be first: ascending", new int[]{1, 2, 3, 4, 5});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_size_after_adding_duplicate_nums(){
-		int[] testArray = {0,0,1,1,2,2,3,3,4,4};
-		addAndTestSize("Added " + Arrays.toString(testArray), testArray, 5);
-	}
-	
-	
-	
-	/** Test getCount =======================================================================================**/
-	
-	@Test(timeout = TIMEOUT)
-	public void test_get_count_after_adding_many_same_num(){
-		int key = 9;
-		int[] testArray = {9, 9, 9, 9, 9, 9, 9};
-		addAndGetCount("Added " + Arrays.toString(testArray) + ", key=" + key, testArray, key, 7);
+	public void multipleUniqueDescAtFrontTest(){
+		checkFirstElementCorrectincCount("Last element should be first: descending", new int[]{5, 4, 3, 2, 1});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_get_count_after_adding_many_diff_nums(){
-		int key = 5;
-		int[] testArray = {0, 5, -1, 5, 1, 5, 2};
-		addAndGetCount("Added " + Arrays.toString(testArray) + ", key=" + key, testArray, key, 3);
-	}
-	
-	
-	
-	/** Test Iterator =======================================================================================**/
-
-	@Test(timeout = TIMEOUT, expected = java.util.NoSuchElementException.class)
-	public void test_iterator_empty() {
-		SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
-		iter.next(); 
+	public void duplicatesTest(){
+		checkFirstElementCorrectincCount("Check internal correctness with duplicates", new int[]{1, 2, 3, 3, 3, 4});
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void test_iterator_get_all_data() {
-		int[] startArray = {7, -5, -5, -6, 6, 10, -9, 4, 8, 6};
-		
-		// Expected array has no duplicates and is sorted
-		for(int i = 0; i < startArray.length; i++) { dc.incCount(startArray[i]); }
-		int[] expected = {-9, -6, -5, 4, 6, 7, 8, 10};
-		
-		// Actual array returned by the iterator
-		int i = 0;
-		SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
-		int[] actual = new int[expected.length];
-		while(iter.hasNext()) { actual[i++] = iter.next().data; }
-		
-		// Sort and test
-		Arrays.sort(actual);
-		System.out.println("Actual: " + Arrays.toString(actual));
-		System.out.println("Expected: " + Arrays.toString(expected));
-		assertArrayEquals("Added " + Arrays.toString(startArray), expected, actual);
+	public void multipleDuplicatesTest(){
+		checkFirstElementCorrectincCount("Check internal correctness with multiple duplicates", new int[]{1, 2, 3, 3, 3, 1});
 	}
 	
+	@Test(timeout = TIMEOUT)
+	public void firstElementAtFrontSearchTest(){
+		checkFirstElementCorrectGetCount("Only element should be first element", new int[]{5}, 5);
+	}
 	
+	@Test(timeout = TIMEOUT)
+	public void multipleUniqueAscAtFrontSearchTest(){
+		checkFirstElementCorrectGetCount("Last element should be first: ascending", new int[]{1, 2, 3, 4, 5}, 3);
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void multipleUniqueDescAtFrontSearchTest(){
+		checkFirstElementCorrectGetCount("Last element should be first: descending", new int[]{5, 4, 3, 2, 1}, 1);
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void duplicatesSearchTest(){
+		checkFirstElementCorrectGetCount("Check internal correctness with duplicates", new int[]{1, 2, 3, 3, 3, 4}, 3);
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void multipleDuplicatesSearchTest(){
+		checkFirstElementCorrectGetCount("Check internal correctness with multiple duplicates", new int[]{1, 2, 3, 3, 3, 1}, 2);
+	}
 	
 	/** Private methods =======================================================================================**/
 
-	private void addAndTestSize(String message, int[] input, int unique){
+	// checks that the last element added is the first element in the list
+	private void checkFirstElementCorrectincCount(String message, int[] input){
 		for(int num : input) { dc.incCount(num); }
-		assertEquals(message, unique, dc.getSize());
+		SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
+		assertEquals(message, input[input.length - 1], (int) iter.next().data);
 	}
-
-	private void addAndGetCount(String message, int[] input, int key, int expected){
+	
+	// checks that the last element searched for is the first element in the list
+	private void checkFirstElementCorrectGetCount(String message, int[] input, int search){
 		for(int num : input) { dc.incCount(num); }
-		assertEquals(message, expected, dc.getCount(key));
-	}	
+		dc.getCount(search);
+		SimpleIterator<DataCount<Integer>> iter = dc.getIterator();
+		assertEquals(message, search, (int) iter.next().data);
+	}
+	
 }

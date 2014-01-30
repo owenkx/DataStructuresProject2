@@ -66,7 +66,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 
 	/** private helper methods :: ROTATIONS============= **/
 	
-	/** Balances an AVL(sub)tree
+	/* Balances an AVL(sub)tree
 	 * @param current The head node fo the subtree to balance
 	 * @param imbalance The side that is too tall
 	 * @return The top node of the new tree
@@ -87,7 +87,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		}
 	}
 
-	/** Fix a subtree in a certain case
+	/* Fix a subtree in a certain case
 	 * @param parent The top of the subtree to fix
 	 * @return The top of the resulting subtree
 	 */
@@ -127,7 +127,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		return moveToTop;
 	}
 
-	/** Fix a subtree in a certain case
+	/* Fix a subtree in a certain case
 	 * @param parent The top of the subtree to fix
 	 * @return The top of the resulting subtree
 	 */
@@ -168,7 +168,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 
 	}
 
-	/** Fix a subtree in a certain case
+	/* Fix a subtree in a certain case
 	 * @param parent The top of the subtree to fix
 	 * @return The top of the resulting subtree
 	 */
@@ -201,7 +201,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		return current;
 	}
 
-	/** Fix a subtree in a certain case
+	/* Fix a subtree in a certain case
 	 * @param parent The top of the subtree to fix
 	 * @return The top of the resulting subtree
 	 */
@@ -234,7 +234,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		return current;
 	}
 
-	/** private helper methods: setting heights **/
+	/* private helper methods: setting heights **/
 	/** Fixes the height of all nodes above a given node
 	 * @param current the node which we fix the height of all nodes above
 	 */
@@ -245,7 +245,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		}
 	}
 
-	/** Fixes the height of all nodes below a certain node
+	/* Fixes the height of all nodes below a certain node
 	 * @param current The node to fix (and fix height of nodes below)
 	 * @return The height of the given node
 	 */
@@ -260,7 +260,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		return current.height;
 	}
 
-	/** Sets of the height of a given node based on the height of its subnodes
+	/* Sets of the height of a given node based on the height of its subnodes
 	 * @param current The node to set the height of 
 	 */
 	private void setHeight(AVLNode current) {
@@ -269,6 +269,10 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		current.height = 1 + Math.max(left_height, right_height);
 	}
 
+	/** Checks if a given subtree is balanced
+	 * @param current the subtree to check
+	 * @return Side.LEFT is left is too tall, .RIGHT if right is to tall, or BALANCED
+	 */
 	private Side checkImbalance(AVLNode current) {
 		// imbalanced if one is noticable taller than other
 		int left_height = (current.left == null) ? -1 : ((AVLNode) current.left).height;
@@ -280,7 +284,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 	
 	/** Private helper methods: error checking =============================**/
 
-	/** Check if this is a valid tree
+	/* Check if this is a valid tree
 	 * @return True iff. this is a valid AVLTree
 	 */
 	public boolean isValidAVL(){
@@ -292,7 +296,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		return true;
 	}
 
-	/** Check if a single subtree is a valid AVL tree - balanced and with correct heights
+	/* Check if a single subtree is a valid AVL tree - balanced and with correct heights
 	 * @param c the subtree to check
 	 * @return the height of the subtree
 	 */
@@ -314,7 +318,8 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 	}
 
 	/** Private classes ==================== **/
-	protected class AVLNode extends BSTNode {
+	// Represents a node in the AVLTree
+	private class AVLNode extends BSTNode {
 		public AVLNode parent;
 		public int height;
 
@@ -329,6 +334,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
 		}
 	}
 
+	// Used for communicating if a subtree is balanced or not
 	private enum Side {
 		LEFT, RIGHT, BALANCED;
 	}
