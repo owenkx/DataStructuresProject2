@@ -32,9 +32,9 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		MTFNode current = overallRoot;
 
 		while (current != null) {
-			if (comparator.compare(current.data, data) == 0) {
+			if (comparator.compare((E) current.dataCount.data, data) == 0) {
 				// Found it!
-				current.count++;
+				current.dataCount.count++;
 
 				if (current != this.overallRoot) {
 					
@@ -61,7 +61,6 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		this.size++;
 		this.overallRoot = new MTFNode(data, this.overallRoot);
 		this.overallRoot.next.prev = this.overallRoot;
-
 	}
 
 	/** {@inheritDoc} */
@@ -75,7 +74,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		MTFNode current = overallRoot;
 
 		while (current != null) {
-			if (comparator.compare(current.data, data) == 0) {
+			if (comparator.compare((E) current.dataCount.data, data) == 0) {
 				// Found it!
 				// if we aren't on the end, update the next node's prev
 				if (current.next != null) { current.next.prev = current.prev; }
@@ -84,7 +83,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 				// and finally update the overall root to the current node
 				current.next = this.overallRoot;
 				this.overallRoot = current;
-				return current.count;
+				return current.dataCount.count;
 			}
 			current = current.next;
 		}
@@ -106,7 +105,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
         		}
         		MTFNode old = current;
         		current = current.next;
-        		return new DataCount<E>(old.data, old.count);
+        		return new DataCount<E>((E) old.dataCount.data, old.dataCount.count);
         	}
     	};
     }
@@ -120,14 +119,13 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 	private class MTFNode {
 		public MTFNode next;
 		public MTFNode prev;
-		public E data;
-		public int count;
+		public DataCount dataCount;
 
 		public MTFNode(E data, MTFNode next) {
 			this.next = next;
 			this.prev = null;
-			this.data = data;
-			this.count = 1;
+			this.dataCount.data = data;
+			this.dataCount.count = 1;
 		}
 
 		public MTFNode(E data) {

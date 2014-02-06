@@ -2,6 +2,8 @@ package main;
 import java.io.IOException;
 
 import phaseA.*;
+import phaseB.HashTable;
+import phaseB.StringHasher;
 import providedCode.*;
 
 /**
@@ -68,6 +70,8 @@ public class WordCount {
         	counter = new BinarySearchTree<String>(new StringComparator());
         } else if (args[0].equals("-m")) {
         	counter = new MoveToFrontList<String>(new StringComparator());
+        } else if (args[0].equals("-h")) {
+        	counter = new HashTable<String>(new StringComparator(), new StringHasher());
         } else {
         	counter = new AVLTree<String>(new StringComparator());
         }
