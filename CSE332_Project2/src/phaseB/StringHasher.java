@@ -8,9 +8,9 @@ public class StringHasher implements Hasher<String> {
 	public int hash(String s) {
 		int hash = 31;
 		for (int i = 0; i < s.length(); i++){
-			hash += s.charAt(i) << 3;
+			hash += s.charAt(i) * 7;
 		}
 			
-		return hash;
+		return Math.abs(hash);
 	}
 }

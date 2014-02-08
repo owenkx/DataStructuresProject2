@@ -16,27 +16,30 @@ import providedCode.*;
  * TODO: Develop appropriate JUnit tests for your HashTable.
  */
 public class HashTable<E> extends DataCounter<E> {
-	private MoveToFrontList[] buckets;
+	private MoveToFrontList<E>[] buckets;
 	private int size;
 	private Hasher h;
 	private Comparator<? super E> c;
 	
-	private final int DEFAULT_CAPACITY = 37;
+	private final int DEFAULT_CAPACITY = 5;
 	
 	private final double RESIZE_AT_LOAD_FACTOR_OF = 1.0;
 	private final int RESIZE_FACTOR = 2;
 	
 	public HashTable(Comparator<? super E> c, Hasher<E> h) {
-		this.buckets = (MoveToFrontList<E>[]) new Object[DEFAULT_CAPACITY];
+		this.buckets = (MoveToFrontList<E>[]) new MoveToFrontList[DEFAULT_CAPACITY];
 		this.c = c;
-		allocateLists(buckets);
+		for (int i = 0; i < buckets.length; i++) {
+			buckets[i] = new MoveToFrontList<E>(this.c);
+		}
 		this.h = h;
 		size = 0;
 	}
 	
 	@Override
 	public void incCount(E data) {
-		MoveToFrontList<E> insertBucket = buckets[h.hash(data) % buckets.length];
+		int insertIndex = h.hash(data) % buckets.length;
+		MoveToFrontList<E> insertBucket = buckets[insertIndex];
 		insertBucket.incCount(data);
 		size++;
 		if (pastLoadFactor()) {
@@ -58,41 +61,43 @@ public class HashTable<E> extends DataCounter<E> {
 	@Override
 	public SimpleIterator<DataCount<E>> getIterator() {
 		return new SimpleIterator<DataCount<E>>() {
-			private int bucketIndex = 0;
-			private int numElementsSeen = 0;
-			private SimpleIterator<DataCount<E>> current =
-					buckets[bucketIndex].getIterator();
+			SimpleIterator<DataCount<E>> currentChain = buckets[0].getIterator();
+			int bucketIndex = 0;
 			
 			@Override
 			public DataCount<E> next() {
-				//no more elements in the hashTable
-				if (!hasNext()) {
-					return null;
-				} 
-				//if there is another element in the current list
-				if (current.hasNext()){
-					numElementsSeen++;
-					return current.next();
-					
-				//if not, look in other buckets for a nonempty list.
-				} else {
-					MoveToFrontList<E> tempBucket = null;
-					while (bucketIndex < buckets.length) {
-						tempBucket = buckets[bucketIndex];
-						if (tempBucket != null && tempBucket.getSize() > 0) {
-							current = tempBucket.getIterator();
-							numElementsSeen++;
-							return current.next();
-						}
-						bucketIndex++;
+				
+				while (bucketIndex < buckets.length) {
+					if (currentChain.hasNext()) {
+						return currentChain.next();
+					} else {
+						if (++bucketIndex < buckets.length || buckets[bucketIndex] != null)
+							currentChain = buckets[bucketIndex].getIterator();
 					}
-					return null;
 				}
+				throw new java.util.NoSuchElementException();
 			}
+//				//no more elements in the hashTable
+//				if (this.hasNext()) {
+//					//if there is another element in the current list
+//					if (currentChain.hasNext()){
+//						dataIndex++;
+//						return currentChain.next();
+//					//if not, look in other buckets for a nonempty list.
+//					} else {
+//						while (++bucketIndex < buckets.length) {
+//							MoveToFrontList<E> tempBucket = buckets[bucketIndex];
+//							if (tempBucket != null && tempBucket.getSize() != 0) {
+//								currentChain = tempBucket.getIterator();
+//								dataIndex++;
+//								return currentChain.next();
+//							}
+//						}
+//					}
 
 			@Override
 			public boolean hasNext() {
-				return numElementsSeen < getSize();
+				
 			}  
 		};
 	}
@@ -102,13 +107,16 @@ public class HashTable<E> extends DataCounter<E> {
 	}
 	
 	private void rehash() {
-		MoveToFrontList<E>[] newTable = (MoveToFrontList<E>[]) new Object[newSize()];
-		allocateLists(newTable);
+		MoveToFrontList<E>[] newTable = (MoveToFrontList<E>[]) new MoveToFrontList[newSize()];
+		for (int i = 0; i < newTable.length; i++) {
+			newTable[i] = new MoveToFrontList<E>(c);
+		}
 		SimpleIterator<DataCount<E>> it = getIterator();
 		while (it.hasNext()) {
 			E insertData = it.next().data;
+			DataCount<E> newData = new DataCount<E>(insertData, 1);
 			MoveToFrontList<E> currentTable = newTable[h.hash(insertData) % newTable.length];
-			currentTable.incCount(insertData);
+			currentTable.incCount(newData.data);
 		}
 		buckets = newTable;
 	}
@@ -131,9 +139,4 @@ public class HashTable<E> extends DataCounter<E> {
 		return true;
 	}
 	
-	private void allocateLists(MoveToFrontList<E>[] table) {
-		for (MoveToFrontList<E> bucket: table) {
-			bucket = new MoveToFrontList<E>(c);
-		}
-	}
 }

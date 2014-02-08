@@ -99,6 +99,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
     		public boolean hasNext() {
         		return (current != null);
         	}
+    		
         	public DataCount<E> next() {
         		if(!hasNext()) {
         			throw new java.util.NoSuchElementException();
@@ -124,8 +125,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		public MTFNode(E data, MTFNode next) {
 			this.next = next;
 			this.prev = null;
-			this.dataCount.data = data;
-			this.dataCount.count = 1;
+			this.dataCount = new DataCount<E>(data, 1);
 		}
 
 		public MTFNode(E data) {
