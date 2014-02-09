@@ -13,8 +13,7 @@ import providedCode.*;
 public class WordCount {
 
 	
-	// TODO: Replace this comment with your own as appropriate.
-	// You may modify this method if you want.
+	// Reads every word in the file and adds it to the appropriate DataCounter.
     private static void countWords(String file, DataCounter<String> counter) {
         try {
             FileWordReader reader = new FileWordReader(file);
@@ -63,28 +62,34 @@ public class WordCount {
             System.exit(1);
         }
         
-        DataCounter<String> counter;
         
-        //checks argument 1 for which data counter implementation to use
-        if (args[0].equals("-b")) {
-        	counter = new BinarySearchTree<String>(new StringComparator());
-        } else if (args[0].equals("-m")) {
-        	counter = new MoveToFrontList<String>(new StringComparator());
-        } else if (args[0].equals("-h")) {
-        	counter = new HashTable<String>(new StringComparator(), new StringHasher());
-        } else {
-        	counter = new AVLTree<String>(new StringComparator());
+        //checks the first argument for which data counter implementation to use
+        if (args[0].matches("^-[bmha]$")) {
+        	DataCounter<String> counter;
+	        if (args[0].equals("-b")) {
+	        	counter = new BinarySearchTree<String>(new StringComparator());
+	        } else if (args[0].equals("-m")) {
+	        	counter = new MoveToFrontList<String>(new StringComparator());
+	        } else if (args[0].equals("-h")) {
+	        	counter = new HashTable<String>(new StringComparator(), new StringHasher());
+	        } else {
+	        	counter = new AVLTree<String>(new StringComparator());
+	        } 
+	        countWords(args[2], counter); 
+	        DataCount<String>[] counts = getCountsArray(counter);
+	        
+	        //checks argument 2 for the sorting algorithm
+	        if (args[1].equals("-is")) {
+	        	Sorter.insertionSort(counts, new DataCountStringComparator());
+	        } else if (args[1].equals("-hs")) {
+	        	Sorter.heapSort(counts, new DataCountStringComparator());
+	        } else if (args[1].equals("-os")) {
+	        	Sorter.otherSort(counts,  new DataCountStringComparator());
+	        } else if (args[1].equals("-k")) {
+	        	//Sorter.topKSort(counts, new DataCountStringComparator());
+	        }
+	        
+	        printDataCount(counts);
         }
-        countWords(args[2], counter); 
-        DataCount<String>[] counts = getCountsArray(counter);
-        
-        //checks argument 2 for the sorting algorithm
-        if (args[1].equals("-is")) {
-        	Sorter.insertionSort(counts, new DataCountStringComparator());
-        } else {
-        	Sorter.heapSort(counts, new DataCountStringComparator());
-        }
-        
-        printDataCount(counts);
     }
 }
