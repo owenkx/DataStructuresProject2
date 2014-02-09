@@ -4,7 +4,6 @@ import providedCode.*;
 
 
 /**
- * TODO: Replace this comment with your own as appropriate.
  * 1. You may implement any kind of HashTable discussed in class; the only 
  *    restriction is that it should not restrict the size of the input domain 
  *    (i.e., it must accept any key) or the number of inputs (i.e., it must 
@@ -17,48 +16,42 @@ import providedCode.*;
  */
 public class HashTable<E> extends DataCounter<E> {
 	private MoveToFrontList<E>[] buckets;
-	private int size;
 	private Hasher h;
 	private Comparator<? super E> c;
+	private int size;
 	
-	private final int DEFAULT_CAPACITY = 5;
-	
+	private final int DEFAULT_CAPACITY = 37;
 	private final double RESIZE_AT_LOAD_FACTOR_OF = 1.0;
 	private final int RESIZE_FACTOR = 2;
 	
 	public HashTable(Comparator<? super E> c, Hasher<E> h) {
-		this.buckets = (MoveToFrontList<E>[]) new MoveToFrontList[DEFAULT_CAPACITY];
+		buckets = (MoveToFrontList<E>[]) new MoveToFrontList[DEFAULT_CAPACITY];
+		for (int i = 0; i < buckets.length; i++)
+			buckets[i] = new MoveToFrontList(c);
+		
 		this.c = c;
-		for (int i = 0; i < buckets.length; i++) {
-			buckets[i] = new MoveToFrontList<E>(this.c);
-		}
 		this.h = h;
-		size = 0;
+		this.size = 0;
 	}
 	
-	@Override
+	/** {@inheritDoc} */
 	public void incCount(E data) {
-		int insertIndex = h.hash(data) % buckets.length;
-		MoveToFrontList<E> insertBucket = buckets[insertIndex];
-		insertBucket.incCount(data);
-		size++;
-		if (pastLoadFactor()) {
-			rehash();
-		}
+		incCount(data, 1);
 	}
 
-	@Override
+	/** {@inheritDoc} */
 	public int getSize() {
 		return size;
 	}
 
-	@Override
+	/** {@inheritDoc} */
 	public int getCount(E data) {
 		MoveToFrontList<E> findBucket = buckets[h.hash(data) % buckets.length];
 		return findBucket.getCount(data);
 	}
 
-	@Override
+	/** {@inheritDoc} */
+
 	public SimpleIterator<DataCount<E>> getIterator() {
 		return new SimpleIterator<DataCount<E>>() {
 			SimpleIterator<DataCount<E>> currentChain = buckets[0].getIterator();
@@ -67,56 +60,76 @@ public class HashTable<E> extends DataCounter<E> {
 			@Override
 			public DataCount<E> next() {
 				
-				while (bucketIndex < buckets.length) {
-					if (currentChain.hasNext()) {
-						return currentChain.next();
-					} else {
-						if (++bucketIndex < buckets.length || buckets[bucketIndex] != null)
-							currentChain = buckets[bucketIndex].getIterator();
-					}
-				}
+				//finds and verifies the right chain
+				if (hasNext())
+					return currentChain.next();
 				throw new java.util.NoSuchElementException();
 			}
-//				//no more elements in the hashTable
-//				if (this.hasNext()) {
-//					//if there is another element in the current list
-//					if (currentChain.hasNext()){
-//						dataIndex++;
-//						return currentChain.next();
-//					//if not, look in other buckets for a nonempty list.
-//					} else {
-//						while (++bucketIndex < buckets.length) {
-//							MoveToFrontList<E> tempBucket = buckets[bucketIndex];
-//							if (tempBucket != null && tempBucket.getSize() != 0) {
-//								currentChain = tempBucket.getIterator();
-//								dataIndex++;
-//								return currentChain.next();
-//							}
-//						}
-//					}
-
+			
 			@Override
 			public boolean hasNext() {
 				
-			}  
+				//iterate through the buckets
+				while (bucketIndex < buckets.length) {
+					
+					//if current chain is valid and/or has a next value
+					if (currentChain.hasNext()) {
+						return true;
+					} else {
+						if (++bucketIndex < buckets.length)
+							currentChain = buckets[bucketIndex].getIterator();
+					}
+				}
+				return false;
+			}
 		};
 	}
 	
+	//Takes in a datum and a count, and 
+	//either increments the data count by the count
+	//or inserts a data count with the count.
+	private void incCount(E data, int count) {
+		
+		int insertIndex = h.hash(data) % buckets.length;
+		MoveToFrontList<E> insertBucket = buckets[insertIndex];
+		
+		//find the bucket to increment
+		int oldBucketSize = insertBucket.getSize();
+		insertBucket.incCount(data, count);
+		size += insertBucket.getSize() - oldBucketSize;
+		
+		//check load factor and rehash
+		if (pastLoadFactor()) {
+			rehash();
+		}
+	}
+	
+	//Tests if the load factor is above the designated
+	//load factor for resizing.
 	private boolean pastLoadFactor() {
 		return ((double) size / buckets.length) > RESIZE_AT_LOAD_FACTOR_OF;
 	}
 	
+	//Creates a new hashtable of prime size and rehashes all of the current elements into the 
+	//table.
 	private void rehash() {
+		
+		//Allocate a new list
 		MoveToFrontList<E>[] newTable = (MoveToFrontList<E>[]) new MoveToFrontList[newSize()];
-		for (int i = 0; i < newTable.length; i++) {
-			newTable[i] = new MoveToFrontList<E>(c);
-		}
+		for (int i = 0; i < newTable.length; i++)
+			newTable[i] = new MoveToFrontList(c);
+		
+		//Iterate through the hash table
 		SimpleIterator<DataCount<E>> it = getIterator();
 		while (it.hasNext()) {
-			E insertData = it.next().data;
-			DataCount<E> newData = new DataCount<E>(insertData, 1);
-			MoveToFrontList<E> currentTable = newTable[h.hash(insertData) % newTable.length];
-			currentTable.incCount(newData.data);
+			DataCount<E> insertData = it.next();
+			
+			//make a copy of the object you found;
+			DataCount<E> newData = new DataCount<E>(insertData.data, insertData.count);
+			MoveToFrontList<E> currentTable = newTable[h.hash(insertData.data) % newTable.length];
+			
+			//increment it
+			currentTable.incCount(newData.data, newData.count);
 		}
 		buckets = newTable;
 	}
@@ -129,10 +142,11 @@ public class HashTable<E> extends DataCounter<E> {
 		return val;
 	}
 	
+	//tests if a number is prime or not
 	private boolean isPrime(int n) {
 		if (n % 2 == 0)
 			return false;
-		for (int i = 3; i < n; i += 2) {
+		for (int i = 3; i * i <= n; i += 2) {
 			if (n % i == 0)
 				return false;
 		}

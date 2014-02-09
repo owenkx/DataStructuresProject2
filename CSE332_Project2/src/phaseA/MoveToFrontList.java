@@ -22,9 +22,16 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 
 	/** {@inheritDoc} */
 	public void incCount(E data) {
+		incCount(data, 1);
+	}
+	
+	//Takes in data and a count, and either inserts a 
+	//data count with the corresponding fields or increments
+	//an existing data count by the count.
+	public void incCount(E data, int count) {
 		if (this.overallRoot == null) {
 			// first thing
-			this.overallRoot = new MTFNode(data);
+			this.overallRoot = new MTFNode(data, count);
 			this.size++;
 			return;
 		}
@@ -34,7 +41,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		while (current != null) {
 			if (comparator.compare((E) current.dataCount.data, data) == 0) {
 				// Found it!
-				current.dataCount.count++;
+				current.dataCount.count += count;
 
 				if (current != this.overallRoot) {
 					
@@ -59,7 +66,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 
 		// didn't find it; add to front
 		this.size++;
-		this.overallRoot = new MTFNode(data, this.overallRoot);
+		this.overallRoot = new MTFNode(data, count, this.overallRoot);
 		this.overallRoot.next.prev = this.overallRoot;
 	}
 
@@ -122,14 +129,19 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 		public MTFNode prev;
 		public DataCount dataCount;
 
-		public MTFNode(E data, MTFNode next) {
+		public MTFNode(E data, int count, MTFNode next) {
 			this.next = next;
 			this.prev = null;
-			this.dataCount = new DataCount<E>(data, 1);
+			this.dataCount = new DataCount<E>(data, count);
+		}
+		
+		public MTFNode(E data, MTFNode next) {
+			this(data, 1, next);
 		}
 
-		public MTFNode(E data) {
-			this(data, null);
+		
+		public MTFNode(E data, int count) {
+			this(data, count, null);
 		}
 
 	}
