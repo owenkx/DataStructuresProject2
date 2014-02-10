@@ -31,8 +31,7 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 	public void incCount(E data, int count) {
 		if (this.overallRoot == null) {
 			// first thing
-			this.overallRoot = new MTFNode(data, count);
-			this.size++;
+			addToFront(data, count);
 			return;
 		}
 		// we have to linear search along
@@ -63,11 +62,26 @@ public class MoveToFrontList<E> extends DataCounter<E> {
 				current = current.next;
 			}
 		}
+		
+		//didn't find it; add to front
+		addToFront(data, count);
 
 		// didn't find it; add to front
-		this.size++;
-		this.overallRoot = new MTFNode(data, count, this.overallRoot);
-		this.overallRoot.next.prev = this.overallRoot;
+//		this.size++;
+//		this.overallRoot = new MTFNode(data, count, this.overallRoot);
+//		this.overallRoot.next.prev = this.overallRoot;
+	}
+	
+	public void addToFront(E data, int count) {
+		if (this.overallRoot == null) {
+			// first thing
+			this.overallRoot = new MTFNode(data, count);
+			this.size++;
+		} else {
+			this.size++;
+			this.overallRoot = new MTFNode(data, count, this.overallRoot);
+			this.overallRoot.next.prev = this.overallRoot;
+		}
 	}
 
 	/** {@inheritDoc} */

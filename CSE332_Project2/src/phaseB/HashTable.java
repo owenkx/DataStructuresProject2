@@ -129,7 +129,7 @@ public class HashTable<E> extends DataCounter<E> {
 			MoveToFrontList<E> currentTable = newTable[h.hash(insertData.data) % newTable.length];
 			
 			//increment it
-			currentTable.incCount(newData.data, newData.count);
+			currentTable.addToFront(newData.data, newData.count);
 		}
 		buckets = newTable;
 	}
