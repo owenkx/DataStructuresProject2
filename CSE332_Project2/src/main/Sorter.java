@@ -38,10 +38,48 @@ public class Sorter {
 		}
 	}
 
-	public static <E> void topKSort(E[] array, Comparator<E> comparator, int k) {
-		// TODO: To-be implemented (the order of elements at index >= k does not matter)
+	public static <E> void topKSort(E[] array, Comparator<E> reverse_comparator, int k) {
+		System.out.println("test");
+		// If k is larger than our array, we can just print out the whole array
+		if (k >= array.length) { k = array.length; }
+		
+		FourHeap<E> heap = new FourHeap<E>(reverse_comparator);
+		// Put the first k items in our reverse heap
+		for (int i = 0; i < k; i++) {
+			heap.insert(array[i]);
+		}
+		
+		// Now alternate deleting min and inserting elements to always have k in our reverse heap
+		for (int i = k; i < array.length; i++) {
+			heap.deleteMin();
+			heap.insert(array[i]);
+		}
+		
+		// now get everything out of the reverse heap, into a list
+		for (int i = 0; i < k; i++) {
+			array[i] = heap.deleteMin();
+		}
+		
+		if (!heap.isEmpty()) { throw new IllegalStateException(); }
+		
+		// and finally, reverse the elements in our list
+		for (int i = 0; i < k / 2; i++) {
+			E temp = array[i];
+			array[i] = array[k - 1 - i];
+			array[k - 1 - i] = temp;
+		}
+		
+		// O (k log k) + O ( (n - k) log k) + O ( k log (k) ) + O ( k ) = O ( n log k )
 	}
 
+	/**
+	 * Sort the count array in descending order of count. If two elements have
+	 * the same count, they should be ordered according to the comparator.
+	 * This code uses insertion sort. The code is generic, but in this project
+	 * we use it with DataCount<String> and DataCountStringComparator.
+	 * @param counts array to be sorted.
+	 * @param comparator for comparing elements.
+	 */
 	public static <E> void otherSort(E[] array, Comparator<E> comparator) {
 		if (array.length >= 2) { 
 			quickSort(array, 0, array.length - 1, comparator);

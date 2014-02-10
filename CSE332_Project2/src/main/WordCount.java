@@ -4,6 +4,7 @@ import java.io.IOException;
 import phaseA.*;
 import phaseB.HashTable;
 import phaseB.StringHasher;
+import phaseB.TopKComparator;
 import providedCode.*;
 
 /**
@@ -41,8 +42,9 @@ public class WordCount {
  	
     // IMPORTANT: Used for grading. Do not modify the printing format!
  	// You may modify this method if you want.
-    private static void printDataCount(DataCount<String>[] counts) {
-    	for (DataCount<String> c : counts) {
+    private static void printDataCount(DataCount<String>[] counts, int numToCount) {
+    	for (int i = 0; i < numToCount; i++) {
+    		DataCount<String> c = counts[i];
             System.out.println(c.count + "\t" + c.data);
         }
     }
@@ -55,13 +57,13 @@ public class WordCount {
      * to implement a dictionary ADT
  	 */
     public static void main(String[] args) {
-        if (args.length != 3) {
+    	
+        if (args.length != 3 && !(args.length == 4 && args[1].matches("-k"))) {
             System.err.println("Usage: DataCounter implementation argument");
             System.err.println("Usage: specification of sorting algorithm");
             System.err.println("Usage: name of .txt file");
             System.exit(1);
         }
-        
         
         //checks the first argument for which data counter implementation to use
         if (args[0].matches("^-[bmha]$")) {
@@ -75,7 +77,7 @@ public class WordCount {
 	        } else {
 	        	counter = new AVLTree<String>(new StringComparator());
 	        } 
-	        countWords(args[2], counter); 
+	        countWords((args[1].matches("-k") ? args[3] : args[2]), counter); 
 	        DataCount<String>[] counts = getCountsArray(counter);
 	        
 	        //checks argument 2 for the sorting algorithm
@@ -86,10 +88,10 @@ public class WordCount {
 	        } else if (args[1].equals("-os")) {
 	        	Sorter.otherSort(counts,  new DataCountStringComparator());
 	        } else if (args[1].equals("-k")) {
-	        	//Sorter.topKSort(counts, new DataCountStringComparator());
+	        	Sorter.topKSort(counts, new TopKComparator(), Integer.parseInt(args[2]) + 1);
 	        }
 	        
-	        printDataCount(counts);
+	        printDataCount(counts, (args[1].matches("-k") ? Integer.parseInt(args[2]) : counts.length));
         }
     }
 }
