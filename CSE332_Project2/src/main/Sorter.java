@@ -38,8 +38,16 @@ public class Sorter {
 		}
 	}
 
+	/**
+	 * Sort the count array in descending order of count. If two elements have
+	 * the same count, they should be ordered according to the comparator.
+	 * This code uses insertion sort. The code is generic, but in this project
+	 * we use it with DataCount<String> and DataCountStringComparator.
+	 * @param counts array to be sorted.
+	 * @param comparator for comparing elements, IN REVERSE ORDER
+	 * 		  e.g., is a <= b, the comparator should state that a >= b
+	 */
 	public static <E> void topKSort(E[] array, Comparator<E> reverse_comparator, int k) {
-		System.out.println("test");
 		// If k is larger than our array, we can just print out the whole array
 		if (k >= array.length) { k = array.length; }
 		
@@ -75,7 +83,7 @@ public class Sorter {
 	/**
 	 * Sort the count array in descending order of count. If two elements have
 	 * the same count, they should be ordered according to the comparator.
-	 * This code uses insertion sort. The code is generic, but in this project
+	 * This code uses quick sort. The code is generic, but in this project
 	 * we use it with DataCount<String> and DataCountStringComparator.
 	 * @param counts array to be sorted.
 	 * @param comparator for comparing elements.
