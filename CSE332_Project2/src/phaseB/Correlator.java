@@ -14,6 +14,8 @@ import providedCode.SimpleIterator;
 
 public class Correlator {
 	
+	//Takes in a file and a data counter, puts every single word in the data counter
+	//
 	private static int countWords(String file, DataCounter<String> counter) {
 		int sum = 0;
 		try {
@@ -32,6 +34,7 @@ public class Correlator {
 		return sum;
     }
 	
+	
 	private static double findCorrelation(DataCounter<String> counter1, DataCounter<String> counter2, int size1, int size2) {
 		SimpleIterator<DataCount<String>> it = counter1.getIterator();
 		double sum = 0.0;
@@ -47,6 +50,8 @@ public class Correlator {
 		return sum;
 	}
 	
+	//Takes in a double and determines whether or not it's insignificantly
+	//small or way too large.
 	private static boolean isOutlier(double d) {
 		return d > 0.01 || d < 0.0001;
 	}
