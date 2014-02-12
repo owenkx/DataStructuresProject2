@@ -91,7 +91,7 @@ public class WordCount {
 	        	Sorter.topKSort(counts, new TopKComparator(), Integer.parseInt(args[2]) + 1);
 	        }
 	        
-	        printDataCount(counts, (args[1].matches("-k") ? Integer.parseInt(args[2]) : counts.length));
+	        ///printDataCount(counts, (args[1].matches("-k") ? Integer.parseInt(args[2]) : counts.length));
         }
     }
 }
