@@ -14,6 +14,7 @@ public class TestSorter {
 	private static final int TIMEOUT = 2000; // 2000ms = 2sec
 	private Sorter sorter;
 	private Comparator<Integer> intcomp;
+	private Comparator<Integer> topKComp;
 	
 	@Before
 	public void setup() {
@@ -23,10 +24,16 @@ public class TestSorter {
 				return e1 - e2; 
 			}
 		};
+		
+		topKComp = new Comparator<Integer>() {
+			public int compare(Integer e1, Integer e2) { 
+				return e2 - e1; 
+			}
+		};
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortEmptyArray() {
+	public void testSortEmptyArrayHS() {
 		Integer[] testArray = {};
 		Integer[] copyArray = {};
 		sorter.heapSort(testArray, intcomp);
@@ -34,7 +41,7 @@ public class TestSorter {
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortOneElement() {
+	public void testSortOneElementHS() {
 		Integer[] testArray = {0};
 		Integer[] copyArray = {0};
 		sorter.heapSort(testArray, intcomp);
@@ -42,7 +49,7 @@ public class TestSorter {
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortTwoElements() {
+	public void testSortTwoElementsHS() {
 		Integer[] testArray = {1, 0};
 		Integer[] copyArray = {0, 1};
 		sorter.heapSort(testArray, intcomp);
@@ -50,7 +57,7 @@ public class TestSorter {
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortToTen() {
+	public void testSortToTenHS() {
 		Integer[] testArray = {1, 123, 14, 9, 2345, 20, 55};
 		Integer[] copyArray = {1, 9, 14, 20, 55, 123, 2345};
 		sorter.heapSort(testArray, intcomp);
@@ -58,7 +65,7 @@ public class TestSorter {
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortDuplicates() {
+	public void testSortDuplicatesHS() {
 		Integer[] testArray = {2, 2, 1, 1, 3, 3};
 		Integer[] copyArray = {1, 1, 2, 2, 3, 3};
 		sorter.heapSort(testArray, intcomp);
@@ -66,7 +73,7 @@ public class TestSorter {
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testSortSameDuplicate() {
+	public void testSortSameDuplicateHS() {
 		Integer[] testArray = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
 		Integer[] copyArray = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 		sorter.heapSort(testArray, intcomp);
@@ -74,7 +81,7 @@ public class TestSorter {
 	}
 
 	@Test(timeout = TIMEOUT)
-	public void testSortLargeDescendingOrder() {
+	public void testSortLargeDescendingOrderHS() {
 		Integer[] testArray = new Integer[100];
 		Integer[] copyArray = new Integer[100];
 		for (int i = 99; i >= 0; i--) {
@@ -90,7 +97,7 @@ public class TestSorter {
 	}
 	
 	@Test(timeout = TIMEOUT)
-	public void testHeapSortInsertionSort() {
+	public void testHeapSortInsertionSortHS() {
 		Integer[] testArray = new Integer[100];
 		Integer[] copyArray = new Integer[100];
 		for (int i = 99; i >= 0; i--) {
@@ -100,6 +107,83 @@ public class TestSorter {
 		sorter.heapSort(testArray, intcomp);
 		sorter.insertionSort(copyArray, intcomp);
 		assertTrue("Testing heapsort for descending order", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testSortEmptyArrayQS() {
+		Integer[] testArray = {};
+		Integer[] copyArray = {};
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing empty quick sort", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testSortOneElementQS() {
+		Integer[] testArray = {0};
+		Integer[] copyArray = {0};
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing quick sort for one element", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testSortTwoElementsQS() {
+		Integer[] testArray = {1, 0};
+		Integer[] copyArray = {0, 1};
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing quick sort for two elements", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testSortToTenQS() {
+		Integer[] testArray = {1, 123, 14, 9, 2345, 20, 55};
+		Integer[] copyArray = {1, 9, 14, 20, 55, 123, 2345};
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing quick sort against insertion sort for 6 elements", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testSortDuplicatesQS() {
+		Integer[] testArray = {2, 2, 1, 1, 3, 3};
+		Integer[] copyArray = {1, 1, 2, 2, 3, 3};
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing quick sort for duplicates", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testSortSameDuplicateQS() {
+		Integer[] testArray = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
+		Integer[] copyArray = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing quick sort for many of the same duplicate", Arrays.equals(testArray, copyArray));
+	}
+
+	@Test(timeout = TIMEOUT)
+	public void testSortLargeDescendingOrderQS() {
+		Integer[] testArray = new Integer[100];
+		Integer[] copyArray = new Integer[100];
+		for (int i = 99; i >= 0; i--) {
+			testArray[i] = i;
+		}
+		
+		for (int i = 0; i <= 99; i++) {
+			copyArray[i] = i;
+		}
+		
+		sorter.otherSort(testArray, intcomp);
+		assertTrue("Testing quick sort for ascending order", Arrays.equals(testArray, copyArray));
+	}
+	
+	@Test(timeout = TIMEOUT)
+	public void testotherSortInsertionSortQS() {
+		Integer[] testArray = new Integer[100];
+		Integer[] copyArray = new Integer[100];
+		for (int i = 99; i >= 0; i--) {
+			testArray[i] = i;
+			copyArray[i] = i;
+		}
+		sorter.otherSort(testArray, intcomp);
+		sorter.insertionSort(copyArray, intcomp);
+		assertTrue("Testing quick sort for descending order", Arrays.equals(testArray, copyArray));
 	}
 	
 }

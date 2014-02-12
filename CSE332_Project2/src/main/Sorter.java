@@ -86,6 +86,8 @@ public class Sorter {
 		}
 	}
 
+	// Performs a quick sort
+	// Post: every element between (inclusive) left and right is sorted
 	private static <E> void quickSort(E[] contents, int left, int right, Comparator<E> comparator) {
 		if ((left + 2) > right) {
 			if (comparator.compare(contents[left], contents[right]) > 0) { swap(contents, left, right); }
@@ -97,11 +99,14 @@ public class Sorter {
 		}
 	}
 
+	// Modifies contents in such a way that c[left] is <= pivot, c[right - 1] is pivot and c[right] >= pivot
 	private static <E> void medianOf3Pivot(E[] contents, int left, int right, Comparator<E> comparator) {
 
+		// select the middle element to test against
 		int middle = (left + right) / 2;
 		int l, r, pivot;
 
+		// computes which of the three spots is greatest, least and middle
 		if (comparator.compare(contents[right], contents[middle]) >= 0 && comparator.compare(contents[right], contents[left]) >= 0) {
 			r = right; 
 			if (comparator.compare(contents[middle], contents[left]) >= 0) { pivot = middle; l = left; }
@@ -116,6 +121,7 @@ public class Sorter {
 			else { pivot = right; l = left; }
 		}
 
+		// set the proper value to the correct spot
 		E temp_l = contents[l];
 		E temp_r = contents[r];
 		E temp_pivot = contents[pivot];
@@ -126,8 +132,10 @@ public class Sorter {
 
 	}
 
+	// partitions the array such that all elements less than pivot are to left of pivot,
+	// all elements greater than pivot are to right of pivot,
+	// and returns the index of pivot
 	private static <E> int partition(E[] contents, int left, int right, Comparator<E> comparator) {
-
 		// assume pivot value is at right
 		E v = contents[right];
 		int i = left;
@@ -144,12 +152,11 @@ public class Sorter {
 				break;
 			}
 		}
-
 		swap(contents, i, right);
-
 		return i;
 	}
 
+	// swaps two elements in a provided array
 	public static <E> void swap(E[] arr, int i, int j) {
 		E temp = arr[i];
 		arr[i] = arr[j];
