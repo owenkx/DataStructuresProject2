@@ -15,7 +15,7 @@ import providedCode.SimpleIterator;
 public class Correlator {
 	
 	//Takes in a file and a data counter, puts every single word in the data counter
-	//
+	//and returns the number of words in the file.
 	private static int countWords(String file, DataCounter<String> counter) {
 		int sum = 0;
 		try {
@@ -34,7 +34,9 @@ public class Correlator {
 		return sum;
     }
 	
-	
+	//Takes two data counters and the word counts of the relevant documents. 
+	//Checks every data counter and calculates the variance in occurrence for every matching word.
+	//Returns the variance
 	private static double findCorrelation(DataCounter<String> counter1, DataCounter<String> counter2, int size1, int size2) {
 		SimpleIterator<DataCount<String>> it = counter1.getIterator();
 		double sum = 0.0;
@@ -66,6 +68,7 @@ public class Correlator {
     	DataCounter<String> counter1;
     	DataCounter<String> counter2;
     	
+    	//Initializes the data counter  ased on the argument
     	if (args[0].equals("-b")){
     		counter1 = new BinarySearchTree<String>(new StringComparator());
     		counter2 = new BinarySearchTree<String>(new StringComparator());
@@ -79,8 +82,12 @@ public class Correlator {
     		counter1 = new AVLTree<String>(new StringComparator());
     		counter2 = new AVLTree<String>(new StringComparator());
     	}	
+    	
+    	//Get the word counts for each document
     	int size1 = countWords(args[1], counter1);
     	int size2 = countWords(args[2], counter2);
+    	
+    	//Calculate the variance and print it
     	variance = findCorrelation(counter1, counter2, size1, size2);
     	
     	System.out.println(variance);  // IMPORTANT: Do not change printing format. Just print the double.
