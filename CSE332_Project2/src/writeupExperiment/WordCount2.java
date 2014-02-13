@@ -1,5 +1,7 @@
-package main;
+package writeupExperiment;
 import java.io.IOException;
+
+import main.Sorter;
 
 import phaseA.*;
 import phaseB.HashTable;
@@ -11,7 +13,7 @@ import providedCode.*;
  * An executable that counts the words in a files and prints out the counts in
  * descending order. You will need to modify this file.
  */
-public class WordCount {
+public class WordCount2 {
 
 	
 	// Reads every word in the file and adds it to the appropriate DataCounter.
@@ -66,7 +68,7 @@ public class WordCount {
         }
         
         //checks the first argument for which data counter implementation to use
-        if (args[0].matches("^-[bmha]$")) {
+        if (args[0].matches("^-[bmha](2)*$")) {
         	DataCounter<String> counter;
 	        if (args[0].equals("-b")) {
 	        	counter = new BinarySearchTree<String>(new StringComparator());
@@ -74,6 +76,8 @@ public class WordCount {
 	        	counter = new MoveToFrontList<String>(new StringComparator());
 	        } else if (args[0].equals("-h")) {
 	        	counter = new HashTable<String>(new StringComparator(), new StringHasher());
+	        } else if (args[0].equals("-h2")) {
+	        	counter = new HashTable<String>(new StringComparator(), new StringHasher2());
 	        } else {
 	        	counter = new AVLTree<String>(new StringComparator());
 	        } 
@@ -91,7 +95,7 @@ public class WordCount {
 	        	Sorter.topKSort(counts, new TopKComparator(), Integer.parseInt(args[2]) + 1);
 	        }
 	        
-	        printDataCount(counts, (args[1].matches("-k") ? Integer.parseInt(args[2]) : counts.length));
+	        //printDataCount(counts, (args[1].matches("-k") ? Integer.parseInt(args[2]) : counts.length));
         }
     }
 }

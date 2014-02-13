@@ -1,8 +1,8 @@
-package phaseB;
+package writeupExperiment;
 import providedCode.Hasher;
 
 
-public class StringHasher implements Hasher<String> {
+public class StringHasher2 implements Hasher<String> {
 	
 	@Override
 	public int hash(String s) {
