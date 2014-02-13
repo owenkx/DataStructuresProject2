@@ -104,6 +104,8 @@ public class TestHashTable extends TestDataCounter<Integer>{
 		
 	}
 	
+	// Add every element in insertArray to dc, check that the count of a certain 
+	// is correct
 	private void addAndConfirm(Integer[] insertArray, Integer value, int count ) {
 		for (Integer i: insertArray) {
 			dc.incCount(i);

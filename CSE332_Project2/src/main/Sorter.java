@@ -47,11 +47,11 @@ public class Sorter {
 	 * @param comparator for comparing elements, IN REVERSE ORDER
 	 * 		  e.g., is a <= b, the comparator should state that a >= b
 	 */
-	public static <E> void topKSort(E[] array, Comparator<E> reverse_comparator, int k) {
+	public static <E> void topKSort(E[] array, Comparator<E> reverseComparator, int k) {
 		// If k is larger than our array, we can just print out the whole array
 		if (k >= array.length) { k = array.length; }
 		
-		FourHeap<E> heap = new FourHeap<E>(reverse_comparator);
+		FourHeap<E> heap = new FourHeap<E>(reverseComparator);
 		// Put the first k items in our reverse heap
 		for (int i = 0; i < k; i++) {
 			heap.insert(array[i]);

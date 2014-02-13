@@ -19,6 +19,7 @@ public class question10Test {
 		System.out.println("OS: " + getAverageRuntime(os));
 	}
 	
+	// Provided code: find averageRuntime of tested code
 	private static double getAverageRuntime(String[] args) {
 	    double totalTime = 0;
 	    for(int i=0; i<NUM_TEST; i++) {
